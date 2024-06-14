@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+    <h1>Edit form</h1>
+    <form th:action="@{/edit/{id}(id=${user.id})}" th:object="${user}" method="post" class="form-inline">
+        <div class="form-group">
+            <input type="text"
+                   class="form-control"
+                   th:field="*{username}"
+                   th:value="*{username}"
+                   placeholder="Enter your name" required>
+        </div>
+        <div class="form-group">
+            <input type="text"
+                   class="form-control"
+                   th:field="*{email}"
+                   th:value="*{email}"
+                   placeholder="Enter your email"
+                   required>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="password"
+                   class="form-control"
+                   th:field="*{password}"
+                   th:value="*{password}"
+                   placeholder="Create password"
+                   required>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        </div>
+        <div class="btn-group">
+            <input type="Submit" class="btn btn-success btn-sm" value="Update">
+        </div>
+    </form>
+
+</body>
+</html>

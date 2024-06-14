@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">Login</h1>
+
+    <form th:action="@{/login}" th:object="${loginDto}" method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" th:field="*{password}" required>
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rememberMe" name="remember-me">
+                <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+
+        <div th:if="${loginError}" class="alert alert-danger mt-3" role="alert">
+            <p th:text="${loginError}"></p>
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger mt-3" role="alert">
+            Invalid username or password.
+        </div>
+        <!-- <div th:if="${param.logout}" class="alert alert-success mt-3" role="alert">
+            You have been logged out.
+        </div> -->
+    </form>
+</div>
+</body>
+</html>

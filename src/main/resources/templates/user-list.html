@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <!-- th:if="${#strings.contains(searchUser.username.toLowerCase(), keyword.toLowerCase())}" -->
+            <tr th:each="user : ${searchUser != null ? searchUser : userPage.content}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.username}"></td>
+                <th th:text="${user.email}"></th>
+                <td>
+                    <a class="btn btn-sm btn-danger" th:href="@{/delete/{id}(id=${user.id})}">Delete</a>
+
+                    <a class="btn btn-sm btn-warning" th:href="@{/edit/{id}(id=${user.id})}">Edit</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="justify-content-center btn-toolbar">
+        <div class="btn-group">
+                <a class="btn btn-secondary" th:if="${userPage.hasPrevious()}" th:href="@{/users(page=${userPage.number - 1}, size=${userPage.size}, keyword=${keyword})}">Previous</a>
+                <hr/>
+
+                <button class="btn btn-secondary" th:text="${userPage.number + 1}"></button>
+                <hr />
+
+                <a class="btn btn-secondary" th:if="${userPage.hasNext()}" th:href="@{/users(page=${userPage.number + 1}, size=${userPage.size}, keyword=${keyword})}">Next</a>
+
+        </div>
+    </div>
+</body>
+</html>

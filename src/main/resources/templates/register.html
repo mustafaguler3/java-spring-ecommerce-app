@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+        layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body layout:fragment="mainContent">
+
+<div th:if="${success}" class="alert alert-success d-flex justify-content-center my-3">
+    <p th:text="${success}"></p>
+</div>
+
+<div class="container mt-5">
+    <h2>Registration</h2>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <div class="form-group">
+            <input class="form-control" type="text" th:field="*{username}" placeholder="Enter your name" required>
+            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger">
+                username is required
+            </span>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" th:field="*{email}" placeholder="Enter your email" required>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" th:field="*{password}" placeholder="Create password" required>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-primary">Register</button>
+        </div>
+        <div class="text">
+            <h3>Already have an account? <a th:href="@{/login}">Login now</a></h3>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
