@@ -15,6 +15,7 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Email</th>
+                <th>Role</th>
                 <th>Image</th>
                 <th>Action</th>
             </tr>
@@ -25,6 +26,9 @@
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.username}"></td>
                 <th th:text="${user.email}"></th>
+                <th th:each="role : ${user.roles}">
+                    <h3 class="text-danger" th:text="${role.roleName}"></h3>
+                </th>
                 <td>
                     <!-- Resim gösterme -->
                     <img th:src="@{/uploads/{fileName}(fileName=${user.profilePicture})}"
