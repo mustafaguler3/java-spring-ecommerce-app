@@ -14,6 +14,22 @@ public class GlobalExceptionHandler {
         modelAndView.setViewName("error");
         return modelAndView;
     }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ModelAndView handleFileNotFoundException(FileNotFoundException exception) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("message",exception.getMessage());
+        modelAndView.setViewName("error");
+        return modelAndView;
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ModelAndView handleFileStorageException(FileStorageException exception) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("message",exception.getMessage());
+        modelAndView.setViewName("error");
+        return modelAndView;
+    }
 }
 
 

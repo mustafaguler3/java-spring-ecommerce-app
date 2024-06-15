@@ -28,14 +28,29 @@ public class SecurityConfig {
     private final String[] publicUrl = {"/",
             "/register",
             "/login",
+            "/images/**",
+            "/uploads/**",
+            "/uploads",
+            "/src/**",
+            "/webjars/**",
             "/resources/**",
             "/assets/**",
-            "/css/**"};
+            "/css/**",
+            "/summernote/**",
+            "/js/**",
+            "/*.css",
+            "/*.js",
+            "/*.js.map",
+            "/fonts**", "/favicon.ico", "/resources/**", "/error"};
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(csrf -> {
+            csrf.disable();
+        });
+        http.cors(cors -> cors.disable());
 
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers(publicUrl)

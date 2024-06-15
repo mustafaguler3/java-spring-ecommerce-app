@@ -15,6 +15,7 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Email</th>
+                <th>Image</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -24,6 +25,11 @@
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.username}"></td>
                 <th th:text="${user.email}"></th>
+                <td>
+                    <!-- Resim gösterme -->
+                    <img th:src="@{/uploads/{fileName}(fileName=${user.profilePicture})}"
+                         alt="Profile Picture" class="img-thumbnail" style="max-width: 150px; with:106px" />
+                </td>
                 <td>
                     <a class="btn btn-sm btn-danger" th:href="@{/delete/{id}(id=${user.id})}">Delete</a>
 

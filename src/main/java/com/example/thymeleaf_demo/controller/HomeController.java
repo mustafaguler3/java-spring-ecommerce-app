@@ -4,12 +4,19 @@ import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.LoginDto;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.UserRepository;
+import com.example.thymeleaf_demo.service.FileStorageService;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,11 +25,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,12 +40,14 @@ public class HomeController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public HomeController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public HomeController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, FileStorageService fileStorageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping(value = {"/", "/home"})
@@ -69,11 +79,13 @@ public class HomeController {
         return "logout-success";
     }
 
+
     @GetMapping("/users")
     public String userList(Model model,
                            @RequestParam(defaultValue = "0",name = "page") int pageNumber,
                            @RequestParam(defaultValue = "4",name = "size") int pageSize,
-                           @RequestParam(value = "keyword",required = false) String keyword){
+                           @RequestParam(value = "keyword",required = false) String keyword
+                           ){
 
         if(keyword != null && !keyword.isEmpty()){
             List<User> searchUser = userRepository.searchByUsername(keyword);
@@ -86,10 +98,19 @@ public class HomeController {
             if(users.isEmpty()){
                 throw new ResourceNotFoundException("No users found");
             }
-        model.addAttribute("keyword",keyword);
+            model.addAttribute("keyword",keyword);
 
         return "user-list";
     }
+
+    @GetMapping("/uploads/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        Resource file = fileStorageService.loadFileAsResource(filename);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Integer id){
