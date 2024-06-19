@@ -10,6 +10,9 @@
 
 <div class="container mt-5">
 
+    <div th:if="${message}">
+        <h3 th:text="${message}" class="alert alert-warning"></h3>
+    </div>
     <h1 class="mb-4">Login</h1>
 
     <form th:action="@{/login}" th:object="${loginDto}" method="post">
@@ -31,12 +34,11 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
 
-        <div th:if="${loginError}" class="alert alert-danger mt-3" role="alert">
-            <p th:text="${loginError}"></p>
+        <div th:if="${errorMsg}" class="my-2 py-2">
+            <h6 th:text="${errorMsg}" class="alert alert-info"></h6>
         </div>
-        <div th:if="${param.error}" class="alert alert-danger mt-3" role="alert">
-            Invalid username or password.
-        </div>
+
+        <!-- <span style="color:red;">[[${errorMsg}]]</span> -->
         <!-- <div th:if="${param.logout}" class="alert alert-success mt-3" role="alert">
             You have been logged out.
         </div> -->

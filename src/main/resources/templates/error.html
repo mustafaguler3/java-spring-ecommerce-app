@@ -8,7 +8,7 @@
     <title>Title</title>
 </head>
 <body layout:fragment="mainContent">
-    <div class="d-flex justify-content-center align-items-center">
+    <div th:if="${message}" class="d-flex justify-content-center align-items-center">
         <h1 th:text="${message}"></h1>
     </div>
 </body>

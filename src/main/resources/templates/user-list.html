@@ -44,13 +44,13 @@
     </table>
     <div class="justify-content-center btn-toolbar">
         <div class="btn-group">
-                <a class="btn btn-secondary" th:if="${userPage.hasPrevious()}" th:href="@{/users(page=${userPage.number - 1}, size=${userPage.size}, keyword=${keyword})}">Previous</a>
+                <a class="btn btn-primary" th:if="${userPage.hasPrevious()}" th:href="@{/users(page=${userPage.number - 1}, size=${userPage.size}, keyword=${keyword})}">Previous</a>
                 <hr/>
 
-                <button class="btn btn-secondary" th:text="${userPage.number + 1}"></button>
+                <button class="btn btn-primary" th:text="${userPage.number + 1}"></button>
                 <hr />
 
-                <a class="btn btn-secondary" th:if="${userPage.hasNext()}" th:href="@{/users(page=${userPage.number + 1}, size=${userPage.size}, keyword=${keyword})}">Next</a>
+                <a class="btn btn-primary" th:if="${userPage.hasNext()}" th:href="@{/users(page=${userPage.number + 1}, size=${userPage.size}, keyword=${keyword})}">Next</a>
 
         </div>
     </div>

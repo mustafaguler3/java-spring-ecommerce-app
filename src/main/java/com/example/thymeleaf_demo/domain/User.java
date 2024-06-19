@@ -30,6 +30,12 @@ public class User {
     @NotBlank(message = "Image must not be blank")
     private String profilePicture;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private VerificationToken verificationToken;
+
+
+    private Boolean isEnabled = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

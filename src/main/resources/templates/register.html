@@ -10,14 +10,12 @@
 
 <body layout:fragment="mainContent">
 
-<div th:if="${param.success}" class="alert alert-success">You have successfully registered.</div>
-
-
 <div class="container mt-5">
     <h2>Registration</h2>
+    <div th:if="${param.success}" class="alert alert-success">You have successfully registered.</div>
 
-    <div th:if="${message}">
-        <div class="alert alert-info" th:text="${message}"></div>
+    <div th:if="${userSaved}" class="alert alert-success">
+        <p th:text="${userSaved}"></p>
     </div>
 
     <form th:action="@{/register}" th:object="${user}" method="post" enctype="multipart/form-data">
@@ -48,7 +46,8 @@
 
         <div class="form-group">
             <label for="profilePicture">Profile Picture</label>
-            <input type="file" id="profilePicture" name="profilePicture" class="form-control-file" th:field="*{profilePicture}" required>
+            <input type="file" id="profilePicture" name="profilePicture" class="form-control-file"
+                   th:field="*{profilePicture}" required>
 
         </div>
 

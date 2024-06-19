@@ -8,8 +8,18 @@
     <title>Title</title>
 </head>
 <body layout:fragment="mainContent">
+
+    <div th:if="${profilePicture}">
+    <p th:text="${profilePicture}" class="alert alert-danger"></p>
+    </div>
+    <div th:if="${success}">
+        <p th:text="${success}" class="alert alert-success"></p>
+    </div>
+
     <h1>Edit form</h1>
-    <form th:action="@{/edit/{id}(id=${user.id})}" th:object="${user}" method="post" class="form-inline">
+
+    <form th:action="@{/edit/{id}(id=${user.id})}" th:object="${user}" method="post" enctype="multipart/form-data" >
+
         <div class="form-group">
             <input type="text"
                    class="form-control"
@@ -35,6 +45,16 @@
                    required>
             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
         </div>
+
+        <div class="form-group">
+            <label for="profilePicture">Profile Picture</label>
+            <input type="file" id="profilePicture" name="profilePicture" class="form-control-file"
+                   th:value="*{profilePicture}"
+                   th:field="*{profilePicture}" required>
+
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        </div>
+
         <div class="btn-group">
             <input type="Submit" class="btn btn-success btn-sm" value="Update">
         </div>

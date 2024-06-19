@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+        layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Verified</title>
+    <link rel="stylesheet" th:href="@{/css/account-verified.css}">
+</head>
+<body layout:fragment="mainContent">
+
+<div class="body">
+    <div class="container">
+        <div class="verification-message">
+            <h2>Account Verified</h2>
+            <p>Your account has been successfully verified. You can now log in.</p>
+            <a th:href="@{/login}" class="login-button">Log In</a>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+

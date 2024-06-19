@@ -2,6 +2,7 @@ package com.example.thymeleaf_demo.controller;
 
 import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.LoginDto;
+import com.example.thymeleaf_demo.exception.FileStorageException;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.UserRepository;
 import com.example.thymeleaf_demo.service.FileStorageService;
@@ -25,12 +26,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,7 +118,7 @@ public class HomeController {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") Integer id){
+    public String delete(@PathVariable("id") Integer id){
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()){
             throw new ResourceNotFoundException("User not found");
@@ -123,17 +128,39 @@ public class HomeController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEdit(@PathVariable("id") Integer id, Model model){
+    public String edit(@PathVariable("id") Integer id, Model model){
         Optional<User> user = userRepository.findById(id);
         model.addAttribute("user",user.get());
         return "edit-form";
     }
+
     @PostMapping("/edit/{id}")
-    public String editUser(@PathVariable("id") Integer id,@ModelAttribute("user") User user){
+    public String edit(@PathVariable("id") Integer id,
+                           @ModelAttribute("user") User user,
+                           BindingResult bindingResult,
+                           Model model,
+                           @RequestParam("profilePicture") MultipartFile profilePicture){
+
         Optional<User> findedUser = userRepository.findById(id);
 
         if (!findedUser.isPresent()){
             throw new ResourceNotFoundException("User not found");
+        }
+
+        if (!profilePicture.isEmpty()){
+            try {
+                String fileName = fileStorageService.storeFile(profilePicture);
+                Path filePath = fileStorageService.loadFile(fileName);
+
+                if(!filePath.toString().equals(findedUser.get().getProfilePicture())){
+                    fileStorageService.deleteFile(findedUser.get().getProfilePicture());
+                }
+                findedUser.get().setProfilePicture(fileName);
+                model.addAttribute("success","Photo updated successfuly");
+            }catch (FileStorageException e){
+                e.printStackTrace();
+                bindingResult.rejectValue("profilePicture",e.getMessage(),"Failed to upload profile picture");
+            }
         }
 
         findedUser.get().setUsername(user.getUsername());
@@ -141,9 +168,16 @@ public class HomeController {
         findedUser.get().setPassword(user.getPassword());
         userRepository.save(findedUser.get());
 
-        return "redirect:/users";
+        return "redirect:/edit/"+user.getId();
     }
 
+
+    private Date calculateExpiryDate(int expiryTimeInMinutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Timestamp(cal.getTime().getTime()));
+        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+        return new Date(cal.getTime().getTime());
+    }
 
 }
 

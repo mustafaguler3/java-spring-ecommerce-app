@@ -1,23 +1,21 @@
 package com.example.thymeleaf_demo.config;
 
-import com.example.thymeleaf_demo.domain.UserDetailsImpl;
+import com.example.thymeleaf_demo.filter.CustomAuthenticationProvider;
 import com.example.thymeleaf_demo.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -26,11 +24,13 @@ public class SecurityConfig {
     private PasswordEncoder passwordEncoder;
 
     private final String[] publicUrl = {"/",
+            "/register/**",
             "/register",
             "/login",
+            "/login/**",
+            "/verify",
             "/images/**",
             "/uploads/**",
-            "/uploads",
             "/src/**",
             "/webjars/**",
             "/resources/**",
@@ -42,6 +42,7 @@ public class SecurityConfig {
             "/*.js",
             "/*.js.map",
             "/fonts**", "/favicon.ico", "/resources/**", "/error"};
+
 
 
     @Bean
@@ -57,12 +58,21 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated());
 
+        //http.authenticationProvider(new CustomAuthenticationProvider());
+
         http.formLogin(formLogin ->
                 formLogin.loginPage("/login")
+                        .failureUrl("/login?error")
                        .defaultSuccessUrl("/home", true)
                         .permitAll())
-                .logout(logout -> logout.permitAll().logoutSuccessUrl("/login?logout"));
+                .logout(logout ->
+                        logout.permitAll()
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/login?logout")
+                                .invalidateHttpSession(true)// Oturumun geçerliliğini sonlandır
+                                .deleteCookies("JSESSIONID"));
 
+        //http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
