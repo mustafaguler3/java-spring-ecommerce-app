@@ -1,13 +1,22 @@
 package com.example.thymeleaf_demo.controller;
 
+import com.example.thymeleaf_demo.domain.PasswordResetToken;
 import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.LoginDto;
+import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.FileStorageException;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
+import com.example.thymeleaf_demo.repository.PasswordResetTokenRepository;
 import com.example.thymeleaf_demo.repository.UserRepository;
+import com.example.thymeleaf_demo.service.EmailService;
 import com.example.thymeleaf_demo.service.FileStorageService;
 
+import com.example.thymeleaf_demo.service.UserService;
+import groovy.util.logging.Log4j2;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -34,40 +43,44 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Controller
 public class HomeController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final FileStorageService fileStorageService;
+    private final EmailService emailService;
+    private final ModelMapper modelMapper;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
-    public HomeController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, FileStorageService fileStorageService) {
-        this.userRepository = userRepository;
+    public HomeController(UserService userService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, FileStorageService fileStorageService, EmailService emailService, ModelMapper modelMapper, PasswordResetTokenRepository passwordResetTokenRepository) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.fileStorageService = fileStorageService;
+        this.emailService = emailService;
+        this.modelMapper = modelMapper;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     @GetMapping(value = {"/", "/home"})
-    public String home(Model model) {
+    public String home(Model model) throws Exception {
         model.addAttribute("currentUser",getCurrentUser().getUsername());
         return "home";
     }
 
-    public User getCurrentUser(){
+    public UserDto getCurrentUser() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!(authentication instanceof AnonymousAuthenticationToken)){
 
             String username = authentication.getName();
-            User currentUser = userRepository.findByUsername(username);
+            UserDto currentUser = userService.findByUsername(username);
 
             if (currentUser == null){
                 throw new ResourceNotFoundException("User not found");
@@ -93,11 +106,11 @@ public class HomeController {
                            ){
 
         if(keyword != null && !keyword.isEmpty()){
-            List<User> searchUser = userRepository.searchByUsername(keyword);
+            List<User> searchUser = userService.searchByUsername(keyword);
             model.addAttribute("searchUser",searchUser);
 
         }
-            Page<User> users = userRepository.findAll(PageRequest.of(pageNumber, pageSize));
+            Page<User> users = userService.findAll(PageRequest.of(pageNumber, pageSize));
             model.addAttribute("userPage", users);
 
             if(users.isEmpty()){
@@ -119,17 +132,17 @@ public class HomeController {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id){
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userService.findById(id);
         if (!user.isPresent()){
             throw new ResourceNotFoundException("User not found");
         }
-        userRepository.deleteById(id);
+        userService.deleteUser(user.get());
         return "redirect:/users";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model){
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userService.findById(id);
         model.addAttribute("user",user.get());
         return "edit-form";
     }
@@ -139,9 +152,9 @@ public class HomeController {
                            @ModelAttribute("user") User user,
                            BindingResult bindingResult,
                            Model model,
-                           @RequestParam("profilePicture") MultipartFile profilePicture){
+                           @RequestParam("profilePicture") MultipartFile profilePicture) throws Exception {
 
-        Optional<User> findedUser = userRepository.findById(id);
+        Optional<User> findedUser = userService.findById(id);
 
         if (!findedUser.isPresent()){
             throw new ResourceNotFoundException("User not found");
@@ -166,18 +179,17 @@ public class HomeController {
         findedUser.get().setUsername(user.getUsername());
         findedUser.get().setEmail(user.getEmail());
         findedUser.get().setPassword(user.getPassword());
-        userRepository.save(findedUser.get());
+
+        UserDto userDto = modelMapper.map(findedUser,UserDto.class);
+
+        userService.saveUser(userDto);
 
         return "redirect:/edit/"+user.getId();
     }
 
 
-    private Date calculateExpiryDate(int expiryTimeInMinutes) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Timestamp(cal.getTime().getTime()));
-        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(cal.getTime().getTime());
-    }
+
+
 
 }
 

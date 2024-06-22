@@ -1,11 +1,14 @@
 package com.example.thymeleaf_demo.service.Impl;
 
+import com.example.thymeleaf_demo.domain.PasswordResetToken;
 import com.example.thymeleaf_demo.domain.Role;
 import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.domain.VerificationToken;
+import com.example.thymeleaf_demo.dto.PasswordResetTokenDto;
 import com.example.thymeleaf_demo.dto.RegisterDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.FileStorageException;
+import com.example.thymeleaf_demo.repository.PasswordResetTokenRepository;
 import com.example.thymeleaf_demo.repository.RoleRepository;
 import com.example.thymeleaf_demo.repository.UserRepository;
 import com.example.thymeleaf_demo.repository.VerificationTokenRepository;
@@ -15,14 +18,15 @@ import com.example.thymeleaf_demo.service.UserService;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Date;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,10 +45,12 @@ public class UserServiceImpl implements UserService {
     private EmailService emailService;
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
-    public void saveUser(UserDto userDto) throws MessagingException {
-        User existUser = findByEmail(userDto.getEmail());
+    public void saveUser(UserDto userDto) throws Exception {
+        UserDto existUser = findByEmail(userDto.getEmail());
 
         if (existUser != null){
             throw new RuntimeException("Email already exists");
@@ -78,7 +84,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         User savedUser = userRepository.save(user1);
-        modelMapper.map(savedUser,UserDto.class);
+        UserDto savedUserDto = modelMapper.map(savedUser,UserDto.class);
 
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
@@ -87,14 +93,7 @@ public class UserServiceImpl implements UserService {
         verificationToken.setExpiryDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)); // 24 saat geçerlilik
         verificationTokenRepository.save(verificationToken);
 
-        emailService.sendVerificationEmail(savedUser, token);
-
-       /* // Doğrulama e-postası gönder
-        String verificationLink = "http://localhost:8080/verify?token=" +
-                generateVerificationToken(userDto);
-
-        //emailService.sendSimpleMessage(userDto, verificationLink);
-        emailService.sendSimpleMessage(userDto, verificationLink);*/
+        emailService.sendVerificationEmail(savedUserDto, token);
 
     }
 
@@ -115,6 +114,70 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findById(Integer id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public List<User> searchByUsername(String keyword) {
+        return userRepository.searchByUsername(keyword);
+    }
+
+    @Override
+    public Page<User> findAll(PageRequest pageRequest) {
+        return userRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public String createPasswordResetToken(UserDto user) {
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetTokenDto passwordResetTokenDto = new PasswordResetTokenDto();
+        passwordResetTokenDto.setToken(token);
+        passwordResetTokenDto.setUserDto(user);
+        passwordResetTokenDto.setExpiryDate(LocalDateTime.now().plusHours(24)); // 30 dakika geçerlilik
+
+        PasswordResetToken passwordResetToken = modelMapper.map(passwordResetTokenDto,PasswordResetToken.class);
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        return token;
+    }
+
+    @Override
+    public boolean validatePasswordResetToken(String token){
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
+
+        if (passwordResetToken == null){
+            return false;
+        }
+        PasswordResetTokenDto tokenDto = modelMapper.map(passwordResetToken,PasswordResetTokenDto.class);
+        return !tokenDto.isExpired();
+    }
+
+    @Override
+    public UserDto getUserByPasswordResetToken(String token){
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token);
+
+        if (resetToken == null){
+            return null;
+        }
+
+        PasswordResetTokenDto tokenDto = modelMapper.map(resetToken,PasswordResetTokenDto.class);
+
+        return tokenDto.getUserDto();
+    }
+
+    @Override
+    public void updatePassword(UserDto userDto,String newPassword){
+        User user = modelMapper.map(userDto,User.class);
+
+        userDto.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+        passwordResetTokenRepository.deleteByUser(user);
+    }
+
+    @Override
     public void deleteUser(User user) {
         userRepository.deleteById(user.getId());
     }
@@ -129,12 +192,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public UserDto findByUsername(String username) throws Exception {
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+
+        UserDto userDto = modelMapper.map(user,UserDto.class);
+
+        return userDto;
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public UserDto findByEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null){
+            throw new Exception("User not found");
+        }
+        UserDto userDto = modelMapper.map(user,UserDto.class);
+
+        return userDto;
     }
 }

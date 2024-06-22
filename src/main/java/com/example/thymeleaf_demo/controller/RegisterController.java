@@ -52,7 +52,7 @@ public class RegisterController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") @Valid UserDto userDto,
                                Model model,
-                               BindingResult bindingResult) throws MessagingException {
+                               BindingResult bindingResult) throws Exception {
 
         if (!bindingResult.hasErrors()){
             userService.saveUser(userDto);

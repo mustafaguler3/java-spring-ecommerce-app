@@ -34,6 +34,8 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
 
+        <a th:href="@{/forgot-password}">Forgot your password?</a>
+
         <div th:if="${errorMsg}" class="my-2 py-2">
             <h6 th:text="${errorMsg}" class="alert alert-info"></h6>
         </div>

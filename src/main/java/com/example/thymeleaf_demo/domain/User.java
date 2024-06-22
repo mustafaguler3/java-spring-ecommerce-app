@@ -33,6 +33,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private VerificationToken verificationToken;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private PasswordResetToken passwordResetToken;
 
     private Boolean isEnabled = false;
 

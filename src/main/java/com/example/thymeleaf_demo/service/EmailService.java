@@ -5,5 +5,6 @@ import com.example.thymeleaf_demo.dto.UserDto;
 import jakarta.mail.MessagingException;
 
 public interface EmailService {
-    void sendVerificationEmail(User user, String verificationLink) throws MessagingException;
+    void sendVerificationEmail(UserDto user, String verificationLink) throws MessagingException;
+    void sendPasswordResetEmail(UserDto user, String resetLink);
 }
