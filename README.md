@@ -10,3 +10,7 @@ Password Reset
 
 ![img_5.png](img_5.png)
 
+Profile 
+
+it will be updated
+![img_6.png](img_6.png)

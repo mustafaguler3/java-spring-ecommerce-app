@@ -51,7 +51,7 @@ public class PasswordResetController {
             return "reset-password";
         }
 
-        UserDto user = userService.getUserByPasswordResetToken(token);
+        User user = userService.getUserByPasswordResetToken(token);
 
         if (user == null) {
             model.addAttribute("message", "Invalid or expired token");

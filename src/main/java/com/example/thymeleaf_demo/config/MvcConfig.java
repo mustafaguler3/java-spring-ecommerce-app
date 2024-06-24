@@ -18,15 +18,6 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:./uploads/");
-    }
-    //converts the uploadDir string to a path
-    //maps requests starting with "/photos/ to a file system location"
-    //file:<absoulute path to photos directory>
-    //The ** will match on all sub-directories
-    private void exposeDirectory(String uploadDir,ResourceHandlerRegistry registry){
-        Path path = Paths.get(uploadDir);
-        registry.addResourceHandler("/"+uploadDir+"/**")
-                .addResourceLocations("file:"+path.toAbsolutePath()+"/");
+                .addResourceLocations("file:uploads/");
     }
 }

@@ -38,14 +38,17 @@ public class ForgotPasswordController {
     public String forgotPassword(@RequestParam(value = "email",required = false) String email,
                                  Model model) throws Exception {
 
-        UserDto userDto = userService.findByEmail(email);
-        if (userDto == null){
+        UserDto user = userService.findByEmail(email);
+        if (user == null){
             model.addAttribute("error","No user found with that email address");
             return "forgot-password";
         }
-        String token = userService.createPasswordResetToken(userDto);
+
+        User userMap = modelMapper.map(user,User.class);
+
+        String token = userService.createPasswordResetToken(userMap);
         String resetLink = "http://localhost:8080/reset-password?token=" + token;
-        emailService.sendPasswordResetEmail(userDto,resetLink);
+        emailService.sendPasswordResetEmail(userMap,resetLink);
 
         model.addAttribute("message","Password reset link has been sent to your email");
         return "forgot-password";

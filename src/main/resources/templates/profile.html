@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link style="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body layout:fragment="mainContent">
+
+<div class="row align-items-center flex-row-reverse">
+    <div class="col-lg-6">
+        <div class="about-text go-to" th:if="${currentUser != null}">
+            <h3 class="dark-color">About Me</h3>
+            <h6 class="theme-color lead " style="font-size:30px">Software Developer</h6>
+            <p th:text="${currentUser.description}"></p>
+            <div class="row about-list">
+                <div class="col-md-6">
+                    <div class="media">
+                        <label>Name</label>
+                        <p th:text="${currentUser.username}">820-885-3321</p>
+                    </div>
+                    <div class="media">
+                        <label>E-mail</label>
+                        <p th:text="${currentUser.email}">info@domain.com</p>
+                    </div>
+                    <div class="media">
+                        <label>Phone</label>
+                        <p>820-885-3321</p>
+                    </div>
+                    <div class="media">
+                        <label>Freelance</label>
+                        <p>Available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="about-avatar">
+            <img th:if="${currentUser.profilePictureUrl != null}"
+                 th:src="@{/uploads/{fileName}(fileName=${currentUser.profilePictureUrl})}" alt="Profile Picture">
+        </div>
+    </div>
+
+    <div th:if="${currentUser == null}">
+        <p>User profile not available</p>
+    </div>
+</div>
+
+</body>
+</html>
+
+

@@ -36,12 +36,14 @@
                     </ul>
                     <ul class="navbar-nav ms-auto" sec:authorize="isAuthenticated()">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Logged in as <span th:text="${currentUser}"
-                            ></span></a>
+                             <a class="nav-link" th:href="@{/profile}">
+                                 Logged in as - <span th:text="${currentUser}"
+                            ></span>
+                            </a>
                         </li>
 
                         <li class="nav-item" >
-                            <a class="nav-link"  th:href="@{/logout}">Logout</a>
+                            <a class="nav-link" th:href="@{/logout}">Logout</a>
                         </li>
                     </ul>
                     <form th:action="@{/users}" th:classappend="${#authorization.expression('isAuthenticated()') ? 'd-flex justify-content-center' : 'd-flex ms-auto'}" method="get">

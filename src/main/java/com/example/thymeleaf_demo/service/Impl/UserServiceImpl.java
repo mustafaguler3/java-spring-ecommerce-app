@@ -8,6 +8,7 @@ import com.example.thymeleaf_demo.dto.PasswordResetTokenDto;
 import com.example.thymeleaf_demo.dto.RegisterDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.FileStorageException;
+import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.PasswordResetTokenRepository;
 import com.example.thymeleaf_demo.repository.RoleRepository;
 import com.example.thymeleaf_demo.repository.UserRepository;
@@ -49,27 +50,36 @@ public class UserServiceImpl implements UserService {
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
-    public void saveUser(UserDto userDto) throws Exception {
+    public void saveUser(UserDto userDto)  {
         UserDto existUser = findByEmail(userDto.getEmail());
+
+        // Validate inputs
+        if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
 
         if (existUser != null){
             throw new RuntimeException("Email already exists");
         }
 
             User user1 = new User();
-
             user1.setUsername(userDto.getUsername());
             user1.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user1.setEmail(userDto.getEmail());
+            user1.setDescription(userDto.getDescription());
             user1.setIsEnabled(false);
 
             Role role = roleRepository.findByRoleName("ROLE_USER");
             if(role != null){
-                role.setRoleName(role.getRoleName());
-                roleRepository.save(role);
+                user1.setRoles(Collections.singleton(role));
+            }else {
+                Role newRole = new Role();
+                newRole.setRoleName("ROLE_USER");
+                roleRepository.save(newRole);
+                user1.setRoles(Collections.singleton(newRole));
             }
-            user1.setRoles(Collections.singleton(role));
 
+            //MultipartFile mapToMultipart = modelMapper.map(user.getProfilePicture(),MultipartFile.class);
             MultipartFile profilePicture = userDto.getProfilePicture();
 
             if (profilePicture != null && !profilePicture.isEmpty()){
@@ -83,8 +93,9 @@ public class UserServiceImpl implements UserService {
                     throw new RuntimeException("Failed to upload profile picture");
                 }
             }
-        User savedUser = userRepository.save(user1);
-        UserDto savedUserDto = modelMapper.map(savedUser,UserDto.class);
+        userRepository.save(user1);
+
+        //UserDto mapToDto = convertToDto(user1);
 
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
@@ -93,7 +104,7 @@ public class UserServiceImpl implements UserService {
         verificationToken.setExpiryDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)); // 24 saat geçerlilik
         verificationTokenRepository.save(verificationToken);
 
-        emailService.sendVerificationEmail(savedUserDto, token);
+        emailService.sendVerificationEmail(user1, token);
 
     }
 
@@ -103,10 +114,7 @@ public class UserServiceImpl implements UserService {
         if (verificationToken != null) {
             User user = verificationToken.getUser();
             user.setIsEnabled(true);
-
-            User savedUser = userRepository.save(user);
-            modelMapper.map(savedUser,UserDto.class);
-
+            userRepository.save(user);
             verificationTokenRepository.delete(verificationToken);
             return true;
         }
@@ -114,8 +122,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Integer id) {
-        return userRepository.findById(id);
+    public User findById(Integer id) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent()){
+            return user.get();
+        }
+        return null;
     }
 
     @Override
@@ -125,19 +138,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> findAll(PageRequest pageRequest) {
-        return userRepository.findAll(pageRequest);
+        Page<User> users = userRepository.findAll(pageRequest);
+
+        if (users == null){
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        return users;
     }
 
     @Override
-    public String createPasswordResetToken(UserDto user) {
+    public String createPasswordResetToken(User user) {
 
         String token = UUID.randomUUID().toString();
-        PasswordResetTokenDto passwordResetTokenDto = new PasswordResetTokenDto();
-        passwordResetTokenDto.setToken(token);
-        passwordResetTokenDto.setUserDto(user);
-        passwordResetTokenDto.setExpiryDate(LocalDateTime.now().plusHours(24)); // 30 dakika geçerlilik
+        PasswordResetToken passwordResetToken = new PasswordResetToken();
+        passwordResetToken.setToken(token);
+        passwordResetToken.setUser(user);
+        passwordResetToken.setExpiryDate(LocalDateTime.now().plusHours(24)); // 30 dakika geçerlilik
 
-        PasswordResetToken passwordResetToken = modelMapper.map(passwordResetTokenDto,PasswordResetToken.class);
         passwordResetTokenRepository.save(passwordResetToken);
 
         return token;
@@ -150,28 +168,24 @@ public class UserServiceImpl implements UserService {
         if (passwordResetToken == null){
             return false;
         }
-        PasswordResetTokenDto tokenDto = modelMapper.map(passwordResetToken,PasswordResetTokenDto.class);
-        return !tokenDto.isExpired();
+        //PasswordResetTokenDto tokenDto = modelMapper.map(passwordResetToken,PasswordResetTokenDto.class);
+        return !passwordResetToken.isExpired();
     }
 
     @Override
-    public UserDto getUserByPasswordResetToken(String token){
+    public User getUserByPasswordResetToken(String token){
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token);
 
         if (resetToken == null){
             return null;
         }
 
-        PasswordResetTokenDto tokenDto = modelMapper.map(resetToken,PasswordResetTokenDto.class);
-
-        return tokenDto.getUserDto();
+        return resetToken.getUser();
     }
 
     @Override
-    public void updatePassword(UserDto userDto,String newPassword){
-        User user = modelMapper.map(userDto,User.class);
-
-        userDto.setPassword(passwordEncoder.encode(newPassword));
+    public void updatePassword(User user,String newPassword){
+        user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(user);
         passwordResetTokenRepository.deleteByUser(user);
@@ -185,34 +199,55 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(User user) {
         User user1 = userRepository.findById(user.getId()).orElse(null);
+        assert user1 != null;
         user1.setUsername(user.getUsername());
-        user1.setPassword(user.getPassword());
+        user1.setPassword(passwordEncoder.encode(user.getPassword()));
         user1.setEmail(user.getEmail());
         userRepository.save(user1);
+
+
     }
 
     @Override
-    public UserDto findByUsername(String username) throws Exception {
+    public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username);
 
-        if (user == null) {
-            throw new Exception("User not found");
+        if (user == null){
+            return null;
         }
 
-        UserDto userDto = modelMapper.map(user,UserDto.class);
-
-        return userDto;
+        return convertToDto(user);
     }
 
     @Override
-    public UserDto findByEmail(String email) throws Exception {
+    public UserDto findByEmail(String email) {
         User user = userRepository.findByEmail(email);
 
-        if (user == null){
-            throw new Exception("User not found");
+        if (user != null){
+            return convertToDto(user);
         }
-        UserDto userDto = modelMapper.map(user,UserDto.class);
 
+        return null;
+    }
+
+    private UserDto convertToDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
+        userDto.setDescription(user.getDescription());
+        userDto.setIsEnabled(user.getIsEnabled()); // Convert Boolean field
+        userDto.setProfilePictureUrl(user.getProfilePicture()); // Set the profile picture URL
         return userDto;
+    }
+
+    private User convertToEntity(UserDto userDto) {
+        User user = new User();
+        user.setUsername(userDto.getUsername());
+        user.setDescription(userDto.getDescription());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setEmail(userDto.getEmail());
+        user.setIsEnabled(userDto.getIsEnabled());
+        user.setProfilePicture(userDto.getProfilePictureUrl()); // Set the profile picture URL
+        return user;
     }
 }

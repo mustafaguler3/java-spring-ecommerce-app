@@ -4,6 +4,7 @@ import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.LoginDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.repository.UserRepository;
+import com.example.thymeleaf_demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,22 +27,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public LoginController(AuthenticationManager authenticationManager, UserService userService) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/login")
     public String showLoginForm(Model model,
                                 @RequestParam(value = "error",required = false) String error) {
         model.addAttribute("loginDto",new UserDto());
+
         if (error != null) {
-            model.addAttribute("errorMsg","Verify your email address before login");
+            model.addAttribute("errorMsg","Invalid username or password");
             return "login";
         }
+
         return "login";
     }
 
@@ -49,8 +52,19 @@ public class LoginController {
     public String login(@ModelAttribute("loginDto") @Valid UserDto userDto,
                         BindingResult bindingResult,
                         Model model) {
+        UserDto user = userService.findByEmail(userDto.getEmail());
 
-            return "redirect:/home";
+        if (user == null) {
+            model.addAttribute("errorMsg", "There is no account associated with this email address.");
+            return "login";
+        }
+
+        if (!user.getIsEnabled()) {
+            model.addAttribute("errorMsg", "Please verify your email address before logging in.");
+            return "login";
+        }
+
+        return "redirect:/home";
     }
 
     @GetMapping("/logout")

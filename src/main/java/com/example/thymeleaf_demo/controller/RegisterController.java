@@ -50,18 +50,14 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") @Valid UserDto userDto,
+    public String registerUser(@Valid @ModelAttribute("user") UserDto userDto,
                                Model model,
-                               BindingResult bindingResult) throws Exception {
-
-        if (!bindingResult.hasErrors()){
-            userService.saveUser(userDto);
-            model.addAttribute("userSaved","User saved and sent link to your email address");
-
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
             return "register";
         }
-
-        return "redirect:/register?success";
+            userService.saveUser(userDto);
+            return "redirect:/register?success";
     }
 
     @GetMapping("/verify")

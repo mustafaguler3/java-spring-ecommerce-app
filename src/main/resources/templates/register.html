@@ -14,8 +14,8 @@
     <h2>Registration</h2>
     <div th:if="${param.success}" class="alert alert-success">You have successfully registered.</div>
 
-    <div th:if="${userSaved}" class="alert alert-success">
-        <p th:text="${userSaved}"></p>
+    <div th:if="${error}">
+        <p th:text="${error}"></p>
     </div>
 
     <form th:action="@{/register}" th:object="${user}" method="post" enctype="multipart/form-data">
@@ -37,11 +37,23 @@
                     th:field="*{email}"
                     placeholder="Enter your email"
                     required>
-            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger">
+                Email is required
+            </span>
         </div>
         <div class="form-group">
             <input class="form-control" type="password" th:field="*{password}" placeholder="Create password" required>
-            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                Password is required
+            </span>
+        </div>
+
+        <div class="form-group py-2 my-2">
+            <textarea class="form-control"
+                      type="text" th:field="*{description}" placeholder="write something about you" required></textarea>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                Description is required
+            </span>
         </div>
 
         <div class="form-group">

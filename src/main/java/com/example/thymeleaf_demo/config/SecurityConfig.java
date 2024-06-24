@@ -59,6 +59,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers(publicUrl)
                         .permitAll()
+                        .requestMatchers("/profile").authenticated()
                         .anyRequest().authenticated());
 
         //http.authenticationProvider(new CustomAuthenticationProvider());

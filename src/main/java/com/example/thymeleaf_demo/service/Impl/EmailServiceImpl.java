@@ -36,7 +36,7 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    public void sendVerificationEmail(UserDto user, String token) throws MessagingException {
+    public void sendVerificationEmail(User user, String token) {
 
         String subject = "Email verification";
         String confirmationLink = "http://localhost:8080/verify?token=" + token;
@@ -57,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendPasswordResetEmail(UserDto user, String resetLink) {
+    public void sendPasswordResetEmail(User user, String resetLink) {
         String subject = "Password reset request";
         String senderName = "User management app";
         String mailContent = "<p> Hello "+user.getUsername()+ ",</p>";

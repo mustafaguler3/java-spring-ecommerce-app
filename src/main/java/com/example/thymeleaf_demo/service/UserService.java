@@ -12,22 +12,22 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    void saveUser(UserDto user) throws Exception;
+    void saveUser(UserDto userDto);
     void deleteUser(User user);
     void updateUser(User user);
-    UserDto findByUsername(String username) throws Exception;
-    UserDto findByEmail(String email) throws Exception;
+
+    UserDto findByUsername(String username);
+    UserDto findByEmail(String email);
     boolean verifyUser(String token);
 
-    Optional<User> findById(Integer id);
-
+    User findById(Integer id);
     List<User> searchByUsername(String keyword);
     Page<User> findAll(PageRequest pageRequest);
 
-    String createPasswordResetToken(UserDto user);
+    String createPasswordResetToken(User user);
     boolean validatePasswordResetToken(String token);
-    UserDto getUserByPasswordResetToken(String token);
-    void updatePassword(UserDto user,String newPassword);
+    User getUserByPasswordResetToken(String token);
+    void updatePassword(User user,String newPassword);
 }
 
 

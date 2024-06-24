@@ -9,7 +9,11 @@
 </head>
 <body layout:fragment="mainContent">
     <div th:if="${message}" class="d-flex justify-content-center align-items-center">
-        <h1 th:text="${message}"></h1>
+        <h1 th:text="${message}">Message</h1>
     </div>
+
+<div th:if="${exception}">
+    <h2 th:text="${exception}">Exception</h2>
+</div>
 </body>
 </html>

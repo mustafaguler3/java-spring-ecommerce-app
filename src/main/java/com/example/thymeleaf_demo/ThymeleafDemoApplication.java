@@ -1,5 +1,7 @@
 package com.example.thymeleaf_demo;
 
+import com.example.thymeleaf_demo.domain.User;
+import com.example.thymeleaf_demo.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +19,7 @@ import java.util.Properties;
 @SpringBootApplication
 @EntityScan("com.example.thymeleaf_demo.domain")
 @EnableJpaRepositories("com.example.thymeleaf_demo.repository")
-@EnableWebSecurity(debug = true)
+//@EnableWebSecurity(debug = true)
 public class ThymeleafDemoApplication {
 
 	public static void main(String[] args) {
@@ -32,7 +34,21 @@ public class ThymeleafDemoApplication {
 
 	@Bean
 	public ModelMapper modelMapper(){
-		return new ModelMapper();
+
+		ModelMapper modelMapper = new ModelMapper();
+
+		modelMapper.typeMap(User.class , UserDto.class)
+				.addMappings(mapper -> {
+					mapper.map(User::getProfilePicture,UserDto::setProfilePicture);
+				});
+
+		modelMapper.typeMap(UserDto.class,User.class)
+				.addMappings(mapper -> {
+					mapper.map(UserDto::getProfilePicture,User::setProfilePicture);
+				});
+
+
+		return modelMapper;
 	}
 	@Bean
 	public JavaMailSender mailSender(){

@@ -3,6 +3,7 @@ package com.example.thymeleaf_demo.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,9 @@ public class User {
     private String email;
     @NotBlank(message = "Password must not be blank")
     private String password;
-    @NotBlank(message = "Image must not be blank")
+    @NotBlank(message = "Description must not be blank")
+    @Size(min = 10,max = 1000)
+    private String description;
     private String profilePicture;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
@@ -43,6 +46,8 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+
 }
 
 

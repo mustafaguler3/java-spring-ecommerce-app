@@ -69,34 +69,15 @@ public class HomeController {
     }
 
     @GetMapping(value = {"/", "/home"})
-    public String home(Model model) throws Exception {
-        model.addAttribute("currentUser",getCurrentUser().getUsername());
+    public String home(Model model) {
+        //model.addAttribute("currentUser",getCurrentUser());
         return "home";
-    }
-
-    public UserDto getCurrentUser() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (!(authentication instanceof AnonymousAuthenticationToken)){
-
-            String username = authentication.getName();
-            UserDto currentUser = userService.findByUsername(username);
-
-            if (currentUser == null){
-                throw new ResourceNotFoundException("User not found");
-            }
-
-            //model.addAttribute("currentUser",currentUser);
-            return currentUser;
-        }
-        return null;
     }
 
     @GetMapping("/logout-success")
     public String logoutSuccess(Model model){
-        return "logout-success";
+        return "/login?logout";
     }
-
 
     @GetMapping("/users")
     public String userList(Model model,
@@ -132,31 +113,32 @@ public class HomeController {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id){
-        Optional<User> user = userService.findById(id);
-        if (!user.isPresent()){
+        User user = userService.findById(id);
+
+        if (user == null){
             throw new ResourceNotFoundException("User not found");
         }
-        userService.deleteUser(user.get());
+        userService.deleteUser(user);
         return "redirect:/users";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model){
-        Optional<User> user = userService.findById(id);
-        model.addAttribute("user",user.get());
+        User user = userService.findById(id);
+        model.addAttribute("user",user);
         return "edit-form";
     }
 
     @PostMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id,
-                           @ModelAttribute("user") User user,
+                           @ModelAttribute("user") UserDto userDto,
                            BindingResult bindingResult,
                            Model model,
                            @RequestParam("profilePicture") MultipartFile profilePicture) throws Exception {
 
-        Optional<User> findedUser = userService.findById(id);
+        User findedUser = userService.findById(id);
 
-        if (!findedUser.isPresent()){
+        if (findedUser == null){
             throw new ResourceNotFoundException("User not found");
         }
 
@@ -165,26 +147,28 @@ public class HomeController {
                 String fileName = fileStorageService.storeFile(profilePicture);
                 Path filePath = fileStorageService.loadFile(fileName);
 
-                if(!filePath.toString().equals(findedUser.get().getProfilePicture())){
-                    fileStorageService.deleteFile(findedUser.get().getProfilePicture());
+                if(!filePath.toString().equals(findedUser.getProfilePicture())){
+                    fileStorageService.deleteFile(String.valueOf(findedUser.getProfilePicture()));
                 }
-                findedUser.get().setProfilePicture(fileName);
+
+                findedUser.setProfilePicture(fileName);
                 model.addAttribute("success","Photo updated successfuly");
+
+                return "user-list";
             }catch (FileStorageException e){
                 e.printStackTrace();
                 bindingResult.rejectValue("profilePicture",e.getMessage(),"Failed to upload profile picture");
+                return "user-list";
             }
         }
 
-        findedUser.get().setUsername(user.getUsername());
-        findedUser.get().setEmail(user.getEmail());
-        findedUser.get().setPassword(user.getPassword());
-
-        UserDto userDto = modelMapper.map(findedUser,UserDto.class);
+        findedUser.setUsername(userDto.getUsername());
+        findedUser.setEmail(userDto.getEmail());
+        findedUser.setPassword(userDto.getPassword());
 
         userService.saveUser(userDto);
 
-        return "redirect:/edit/"+user.getId();
+        return "redirect:/edit/"+userDto.getId();
     }
 
 
