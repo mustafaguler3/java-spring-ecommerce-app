@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+
+
+
+    <div class="container my-3 py-3">
+        <div class="row">
+            <div class="col-4">
+                <div class="text-center">
+                    <img th:if="${currentUser.profilePictureUrl != null}"
+                         th:src="@{/uploads/{fileName}(fileName=${currentUser.profilePictureUrl})}" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="col-8">
+                <form th:action="@{/profile/edit}"
+                      th:object="${currentUser}"
+                      method="post"
+                      enctype="multipart/form-data" >
+
+                    <input type="hidden" th:field="*{id}">
+
+                    <div class="form-group my-2">
+                        <input type="text"
+                               class="form-control"
+                               th:field="*{username}"
+                               placeholder="Enter your name" required>
+                    </div>
+
+                    <div class="form-group my-2">
+
+                        <textarea class="form-control"
+                                  th:field="*{description}"
+                                  required>
+                        </textarea>
+
+                        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                    </div>
+
+                    <div class="form-group my-2">
+                        <label for="profilePictureUrl">Profile Picture</label>
+                        <input type="file" id="profilePictureUrl" name="profilePictureUrl" class="form-control-file"
+                               th:field="*{profilePicture}" required>
+                    </div>
+
+                    <div class="btn-group my-2">
+                        <input type="Submit" class="btn btn-success btn-sm mx-2 py-2" value="Update">
+                    </div>
+                </form>
+
+                <div class="btn-group my-2">
+                    <a th:href="@{/profile}" class="btn btn-primary">Back to profile</a>
+                </div>
+
+                <div th:if="${success}">
+                    <p class="alert alert-success" th:text="${success}"></p>
+                </div>
+                <div th:if="${error}">
+                    <p class="alert alert-danger" th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

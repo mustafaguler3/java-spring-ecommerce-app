@@ -12,5 +12,9 @@ Password Reset
 
 Profile 
 
-it will be updated
-![img_6.png](img_6.png)
+
+Edit Profile Page
+![img_7.png](img_7.png)
+
+Home page
+![img_8.png](img_8.png)

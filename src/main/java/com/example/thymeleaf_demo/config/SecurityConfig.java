@@ -26,9 +26,11 @@ public class SecurityConfig {
     private final String[] publicUrl = {"/",
             "/register/**",
             "/register",
+            "/products",
             "/forgot-password",
             "/reset-password",
             "/reset-password/**",
+
             "/login",
             "/login/**",
             "/verify",
@@ -59,7 +61,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers(publicUrl)
                         .permitAll()
-                        .requestMatchers("/profile").authenticated()
+                        .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated());
 
         //http.authenticationProvider(new CustomAuthenticationProvider());

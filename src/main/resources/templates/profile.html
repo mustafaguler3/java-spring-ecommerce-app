@@ -10,21 +10,33 @@
 </head>
 <body layout:fragment="mainContent">
 
-<div class="row align-items-center flex-row-reverse">
+<div class="row align-items-center flex-row-reverse py-5 px-5">
+
+    <div th:if="${success != null}">
+        <h1 th:text="${success}" class="alert alert-success"></h1>
+    </div>
+    <div th:if="${error != null}">
+        <p th:text="${error}" class="text-danger"></p>
+    </div>
+
     <div class="col-lg-6">
-        <div class="about-text go-to" th:if="${currentUser != null}">
+        <div class="about-text go-to" >
+
             <h3 class="dark-color">About Me</h3>
             <h6 class="theme-color lead " style="font-size:30px">Software Developer</h6>
+
             <p th:text="${currentUser.description}"></p>
+
             <div class="row about-list">
                 <div class="col-md-6">
+
                     <div class="media">
                         <label>Name</label>
-                        <p th:text="${currentUser.username}">820-885-3321</p>
+                        <p th:text="${currentUser.username}"></p>
                     </div>
                     <div class="media">
                         <label>E-mail</label>
-                        <p th:text="${currentUser.email}">info@domain.com</p>
+                        <p th:text="${currentUser.email}"></p>
                     </div>
                     <div class="media">
                         <label>Phone</label>
@@ -36,12 +48,16 @@
                     </div>
                 </div>
             </div>
+
+            <a th:href="@{/profile/edit/{id}(id=${currentUser.id})}"
+               class="btn btn-warning">Edit</a>
         </div>
     </div>
     <div class="col-lg-6">
         <div class="about-avatar">
             <img th:if="${currentUser.profilePictureUrl != null}"
-                 th:src="@{/uploads/{fileName}(fileName=${currentUser.profilePictureUrl})}" alt="Profile Picture">
+                 th:src="@{/uploads/{fileName}(fileName=${currentUser.profilePictureUrl})}"
+                 alt="Profile Picture">
         </div>
     </div>
 

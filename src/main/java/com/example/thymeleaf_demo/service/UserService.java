@@ -13,14 +13,14 @@ import java.util.Optional;
 
 public interface UserService {
     void saveUser(UserDto userDto);
-    void deleteUser(User user);
-    void updateUser(User user);
+    void deleteUser(UserDto user);
+    void updateUser(UserDto user);
 
     UserDto findByUsername(String username);
     UserDto findByEmail(String email);
     boolean verifyUser(String token);
 
-    User findById(Integer id);
+    UserDto findById(int id);
     List<User> searchByUsername(String keyword);
     Page<User> findAll(PageRequest pageRequest);
 

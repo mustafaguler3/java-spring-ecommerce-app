@@ -12,10 +12,10 @@ import java.util.Date;
 public class VerificationToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
-    @OneToOne(targetEntity = User.class)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
     private Date expiryDate;

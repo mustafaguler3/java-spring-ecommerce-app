@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+
+<div class="container-fluid">
+
+    <h1 th:if="${products == null}"></h1>
+    <p class="alert alert-danger" th:text="${error}"></p>
+    <div>
+        Add Product
+        <a th:href="@{/products/new}" class="btn btn-primary">Add Product</a>
+    </div>
+    <table class="table table-hover" th:if="${products != null}">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Category</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- th:if="${#strings.contains(searchUser.username.toLowerCase(), keyword.toLowerCase())}" -->
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.description}"></td>
+            <td>
+                <!-- Resim gösterme -->
+                <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
+                     alt="Profile Picture" class="img-thumbnail" style="max-width: 150px; with:106px" />
+            </td>
+            <td th:text="${product.category.name}">
+            </td>
+            <td>
+                <a class="btn btn-sm btn-danger" th:href="@{/products/delete/{id}(id=${product.id})}">Delete</a>
+
+                <a class="btn btn-sm btn-warning" th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

@@ -11,7 +11,7 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int roleId;
+    private Long roleId;
     private String roleName;
 
     @ManyToMany(mappedBy = "roles",cascade = CascadeType.ALL)

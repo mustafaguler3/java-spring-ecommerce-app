@@ -17,10 +17,13 @@ import com.example.thymeleaf_demo.service.EmailService;
 import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.UserService;
 import jakarta.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +32,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -53,10 +57,6 @@ public class UserServiceImpl implements UserService {
     public void saveUser(UserDto userDto)  {
         UserDto existUser = findByEmail(userDto.getEmail());
 
-        // Validate inputs
-        if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
-        }
 
         if (existUser != null){
             throw new RuntimeException("Email already exists");
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             if (profilePicture != null && !profilePicture.isEmpty()){
                 try {
 
-                    String fileName = fileStorageService.storeFile(profilePicture);
+                    String fileName = fileStorageService.storeFile(profilePicture,"users");
                     user1.setProfilePicture(fileName);
 
                 } catch (FileStorageException e) {
@@ -122,13 +122,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Integer id) {
-        Optional<User> user = userRepository.findById(id);
+    public UserDto findById(int id) {
+        Optional<User> user = userRepository.findById((long) id);
 
-        if (user.isPresent()){
-            return user.get();
-        }
-        return null;
+        return user.map(this::convertToDto).orElse(null);
+
     }
 
     @Override
@@ -192,31 +190,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(User user) {
-        userRepository.deleteById(user.getId());
+    public void deleteUser(UserDto userDto) {
+        userRepository.deleteById(userDto.getId());
     }
 
     @Override
-    public void updateUser(User user) {
-        User user1 = userRepository.findById(user.getId()).orElse(null);
-        assert user1 != null;
-        user1.setUsername(user.getUsername());
-        user1.setPassword(passwordEncoder.encode(user.getPassword()));
-        user1.setEmail(user.getEmail());
-        userRepository.save(user1);
+    public void updateUser(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId())
+                .orElse(null);
 
-
+        if (user != null){
+            user.setUsername(userDto.getUsername());
+            //user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            //user.setEmail(userDto.getEmail());
+            user.setDescription(userDto.getDescription());
+            if (userDto.getProfilePictureUrl() != null){
+                user.setProfilePicture(userDto.getProfilePictureUrl());
+            }
+        }
+        userRepository.save(user);
     }
 
     @Override
     public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username);
-
         if (user == null){
             return null;
         }
 
-        return convertToDto(user);
+        UserDto dto = convertToDto(user);
+
+        return dto;
     }
 
     @Override
@@ -232,6 +236,7 @@ public class UserServiceImpl implements UserService {
 
     private UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setDescription(user.getDescription());
@@ -242,6 +247,7 @@ public class UserServiceImpl implements UserService {
 
     private User convertToEntity(UserDto userDto) {
         User user = new User();
+        user.setId(userDto.getId());
         user.setUsername(userDto.getUsername());
         user.setDescription(userDto.getDescription());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
