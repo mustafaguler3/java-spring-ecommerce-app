@@ -58,7 +58,9 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" th:href="@{/profile}">My profile</a>
-                            <a class="dropdown-item" th:href="@{/products}">Products</a>
+                            <a class="dropdown-item"
+                               sec:authorize="hasRole('ROLE_ADMIN')"
+                               th:href="@{/products}">Products</a>
                             <a class="dropdown-item" th:href="@{/logout}">Logout</a>
 
                         </div>

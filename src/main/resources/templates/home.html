@@ -6,59 +6,77 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+          crossorigin="anonymous">
 
 </head>
 <body layout:fragment="mainContent">
 
-<div class="container">
-    <!-- Section-->
-    <section class="py-5">
-        <div class="container px-4 px-lg-5 mt-5">
-            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+<div th:if="${error}">
+    <p th:text="${error}" class="text-danger"></p>
+</div>
+    <div class="container ms-auto">
+        <div class="row">
+            <div class="col-md-4 col-sm-4" th:each="product : ${products}">
+                <!-- card -->
+                <div class="card border-light my-2" style="width:300px;">
 
-                <div class="col mb-5" th:each="product : ${products}">
-                    <div class="card h-100">
-                        <!-- Sale badge-->
-                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                        <!-- Product image-->
-                        <img class="card-img-top" th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}" alt="..." />
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder" th:text="${product.name}">Special Item</h5>
-                                <!-- Product reviews-->
-                                <div class="d-flex justify-content-center small text-warning mb-2">
-                                    <div class="bi-star-fill"></div>
-                                    <div class="bi-star-fill"></div>
-                                    <div class="bi-star-fill"></div>
-                                    <div class="bi-star-fill"></div>
-                                    <div class="bi-star-fill"></div>
-                                </div>
-                                <!-- Product price-->
-                                <span class="text-muted text-decoration-line-through" th:text="${product.price}">$20.00</span>
-                                $18.00
-                            </div>
+                    <div class="badge badge-sm badge-danger position-absolute text-white" th:text="${product.name}" style="top:0.5rem; left:0.5rem">
+                    </div>
+
+                    <div class="position-absolute" style="top:0.5rem; right:0.5rem">
+                        <i class="far fa-heart" style="font-size:20px; cursor:pointer;"></i>
+                    </div>
+
+                    <a th:href="@{/products/{id}(id=${product.id})}" style="cursor:pointer;">
+                        <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
+                             alt="product-image" class="card-img-top" style="width:100%; height:100%">
+                    </a>
+                    <div class="card-footer border-top border-light p-4">
+                        <a href="#" class="h5" th:text="${product.name}">Apple Watch Series 3</a>
+                        <h6 class="font-weight-light text-gray mt-2" th:text="${product.description}">
+                            Space Gray Aluminum Case with Black Sport Band</h6>
+                        <div class="d-flex mt-3">
+                            <i class="star fas fa-star text-warning mr-1"></i>
+                            <i class="star fas fa-star text-warning mr-1"></i>
+                            <i class="star fas fa-star text-warning mr-1"></i>
+                            <i class="star fas fa-star text-warning mr-1"></i>
+                            <i class="star fas fa-star text-warning"></i>
+                            <span class="badge badge-pill badge-gray ml-2">4.7</span>
                         </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center d-flex justify-content-center">
-
-                                <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-outline-dark"><i class="fa fa-eye" aria-hidden="true"></i>View</a>
-
-                                <a class="btn btn-outline-dark mt-auto mx-1" href="#">
-                                    <i class="fa fa-cart-plus" aria-hidden="true"></i> Add to cart</a>
-                            </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="h5 mb-0 text-gray" th:text="${product.price}">$299.00</span>
+                            <a class="btn btn-xs btn-primary" href="#">
+                                <span class="fas fa-cart-plus mr-2"></span> Add to cart
+                            </a>
                         </div>
                     </div>
                 </div>
+                <!-- card -->
+
             </div>
         </div>
-    </section>
-</div>
+
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" th:if="${currentPage > 0}">
+                        <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages - 1)}">
+                        <a class="page-link" th:href="@{/home(page=${i})}"
+                           th:text="${i + 1}"
+                           th:classappend="${i == currentPage} ? 'active' : ''"></a>
+                    </li>
+                    <li class="page-item" th:if="${currentPage < totalPages - 1}">
+                        <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
 
 </body>
 </html>

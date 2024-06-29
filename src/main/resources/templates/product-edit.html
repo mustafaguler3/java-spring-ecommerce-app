@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+
+<div class="container">
+    <form th:action="@{/products/edit}"
+          th:object="${productDto}" method="post"
+          enctype="multipart/form-data">
+
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-group">
+            <label for="name">Product Name</label>
+            <input type="text"
+                   class="form-control"
+                   placeholder="Product Name"
+                   id="name" th:value="*{name}"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control"
+                      id="description"
+                      placeholder="Description"
+                      th:field="*{description}"
+                      th:value="*{description}"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number" class="form-control" id="price"
+                   th:value="*{price}"
+                   placeholder="price" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="number" class="form-control" id="stock"
+                   th:field="*{stock}"
+                   th:value="*{stock}"
+                   placeholder="Stock" required>
+        </div>
+
+        <div class="form-group my-2">
+            <label for="imageUrl">Product Picture</label>
+            <input
+                    type="file" id="imageUrl" name="file"
+                    class="form-control-file" required>
+        </div>
+
+        <div class="form-group my-2">
+            <label for="category">Categories</label>
+            <select class="form-control" id="category" th:field="*{categoryId}">
+                <option
+                        th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"></option>
+            </select>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

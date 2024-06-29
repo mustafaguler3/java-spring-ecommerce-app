@@ -15,17 +15,15 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String name;
     private BigDecimal price;
     private String description;
     private String imageUrl;
-    private int quantity;
+    private String brand;
     private int stock;
-
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<Review>();
-
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -39,12 +37,13 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, BigDecimal price, String imageUrl, int quantity, Category category) {
+    public Product(String name, String description, BigDecimal price, String imageUrl,
+                    Category category,String brand) {
         this.name = name;
         this.price = price;
+        this.brand = brand;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.quantity = quantity;
         this.category = category;
     }
 

@@ -11,14 +11,14 @@ import java.math.BigDecimal;
 @Data
 public class ProductDto {
 
-    private int id;
+    private Long id;
     private String name;
     private BigDecimal price;
     private String description;
     private MultipartFile imageUrl;
     private String imageUrlShow;
+    private String brand;
     private int stock;
-    private int quantity;
-    private int categoryId;
+    private Long categoryId;
     private Category category;
 }

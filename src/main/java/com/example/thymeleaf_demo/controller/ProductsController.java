@@ -4,8 +4,15 @@ import com.example.thymeleaf_demo.dto.ProductDto;
 import com.example.thymeleaf_demo.service.CategoryService;
 import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.ProductService;
+import groovy.util.logging.Log4j2;
+import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +23,7 @@ import reactor.core.Fuseable;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 public class ProductsController {
 
@@ -31,27 +39,35 @@ public class ProductsController {
     }
 
     @GetMapping("/products/{id}")
-    public String getProduct(@PathVariable("id") int id,
+    public String getProduct(@PathVariable("id") Long id,
                              Model model){
         ProductDto productDto = productService.getProduct(id);
+
         if (productDto == null){
             model.addAttribute("error", "Product not found");
             return "product-detail";
         }
+
         model.addAttribute("product", productDto);
         return "product-detail";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/products")
-    public String getProducts(Model model){
-        List<ProductDto> products = productService.getProducts();
+    public String getProducts(Model model,
+                              @RequestParam(defaultValue = "0",name = "page") int pageNumber,
+                              @RequestParam(defaultValue = "4",name = "size") int pageSize){
 
-        if (products == null || products.stream().count() == 0){
-            model.addAttribute("error","There are no products");
+        Page<ProductDto> products = productService.getProducts(PageRequest.of(pageNumber,pageSize));
+
+        if (products == null){
+            model.addAttribute("error", "No products found");
             return "product-list";
         }
 
-        model.addAttribute("products",productService.getProducts());
+        model.addAttribute("products",products.getContent());
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", products.getTotalPages());
         model.addAttribute("categories",categoryService.getCategories());
 
         return "product-list";
@@ -69,17 +85,72 @@ public class ProductsController {
     @PostMapping("/products/new")
     public String addProduct(@ModelAttribute("productDto") @Valid ProductDto productDto,
                              @RequestParam("file") MultipartFile multipartFile,
-                             BindingResult bindingResult){
+                             BindingResult bindingResult,
+                             Model model){
+
         if (bindingResult.hasErrors()){
+            model.addAttribute("categories",categoryService.getCategories());
             return "create-product";
+        }
+
+        if (multipartFile != null || !multipartFile.isEmpty()){
+            productDto.setImageUrl(multipartFile);
+        }
+
+        productService.createProduct(productDto);
+        model.addAttribute("success","Product created successfully");
+
+        return "redirect:/products";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/products/edit/{id}")
+    public String showUpdateProduct(@PathVariable("id") Long id,
+                                    Model model){
+        ProductDto productDto = productService.getProduct(id);
+
+        if (productDto == null){
+            model.addAttribute("error", "Product not found");
+            return "product-edit";
+        }
+        model.addAttribute("productDto", productDto);
+        model.addAttribute("categories",categoryService.getCategories());
+
+        return "product-edit";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/products/edit")
+    public String showUpdateProduct(@ModelAttribute("productDto") ProductDto productDto,
+                                    @RequestParam("file") MultipartFile multipartFile,
+                                    Model model,
+                                    BindingResult bindingResult){
+
+        if (bindingResult.hasErrors()){
+            return "product-edit";
         }
 
         if (multipartFile != null){
             productDto.setImageUrl(multipartFile);
         }
+        model.addAttribute("success","Product updated successfully");
+        productService.updateProduct(productDto);
 
-        productService.createProduct(productDto);
-
-        return "redirect:/products";
+        return "product-edit";
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -33,9 +33,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private CategoryDto convertToDto(Category category){
+
         CategoryDto dto = new CategoryDto();
         dto.setId(category.getId());
         dto.setName(category.getName());
+        dto.setProducts(category.getProducts());
+
         return dto;
     }
 }

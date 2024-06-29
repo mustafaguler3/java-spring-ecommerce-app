@@ -32,13 +32,12 @@ public class GlobalExceptionHandler {
     }
 
     @ModelAttribute
-    public void addUserToModel(Model model){
+    public void addUserToModel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)){
-            String currentUsername = authentication.getName();
-            UserDto currentUser = userService.findByUsername(currentUsername);
-            logger.info("User from global ex {}", currentUser);
+        if (authentication != null && authentication.isAuthenticated() &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
+            String username = authentication.getName();
+            UserDto currentUser = userService.findByUsername(username);
             model.addAttribute("currentUser", currentUser);
         }
     }
@@ -49,7 +48,8 @@ public class GlobalExceptionHandler {
 
         if (exception.getStackTrace().length > 0){
             StackTraceElement element = exception.getStackTrace()[0];
-            logger.error("Exception occurred in class: {}, method: {}, line: {}", element.getClassName(), element.getMethodName(), element.getLineNumber());
+            logger.error("Exception occurred in class: {}, method: {}, line: {}",
+                    element.getClassName(), element.getMethodName(), element.getLineNumber());
         }
         modelAndView.addObject("message",exception.getMessage());
         modelAndView.addObject("exception",exception.fillInStackTrace());

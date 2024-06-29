@@ -11,11 +11,12 @@
 
 <div class="container-fluid">
 
-    <h1 th:if="${products == null}"></h1>
-    <p class="alert alert-danger" th:text="${error}"></p>
+    <h1 th:if="${errorMsg}">
+        <p class="alert alert-danger" th:text="${errorMsg}"></p>
+    </h1>
+
     <div>
-        Add Product
-        <a th:href="@{/products/new}" class="btn btn-primary">Add Product</a>
+        <a th:href="@{/products/new}" class="btn btn-primary my-3">Add Product</a>
     </div>
     <table class="table table-hover" th:if="${products != null}">
         <thead>
@@ -25,6 +26,7 @@
             <th>Price</th>
             <th>Description</th>
             <th>Image</th>
+            <th>Brand</th>
             <th>Category</th>
             <th>Action</th>
         </tr>
@@ -41,16 +43,36 @@
                 <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
                      alt="Profile Picture" class="img-thumbnail" style="max-width: 150px; with:106px" />
             </td>
+            <td th:text="${product.brand}"></td>
             <td th:text="${product.category.name}">
             </td>
             <td>
                 <a class="btn btn-sm btn-danger" th:href="@{/products/delete/{id}(id=${product.id})}">Delete</a>
 
-                <a class="btn btn-sm btn-warning" th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
             </td>
         </tr>
         </tbody>
     </table>
+
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" th:if="${currentPage > 0}">
+                    <a class="page-link" th:href="@{/products(page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages - 1)}">
+                    <a class="page-link" th:href="@{/products(page=${i})}"
+                       th:text="${i + 1}"
+                       th:classappend="${i == currentPage} ? 'active' : ''"></a>
+                </li>
+                <li class="page-item" th:if="${currentPage < totalPages - 1}">
+                    <a class="page-link" th:href="@{/products(page=${currentPage + 1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 
 

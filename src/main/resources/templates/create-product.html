@@ -20,6 +20,12 @@
             </div>
 
             <div class="form-group">
+                <label for="brand">Product Brand</label>
+                <input type="text" class="form-control"
+                       placeholder="Product Brand" id="brand" th:field="*{brand}" required>
+            </div>
+
+            <div class="form-group">
                 <label for="description">Description</label>
                 <textarea class="form-control" id="description" placeholder="Description" th:field="*{description}"></textarea>
             </div>
@@ -32,22 +38,24 @@
             </div>
 
             <div class="form-group">
-                <label for="quantity">Quantity</label>
-                <input type="number" class="form-control" id="quantity"
-                       th:field="*{quantity}"
-                       placeholder="Quantity" required>
+                <label for="stock">Stock</label>
+                <input type="number" class="form-control" id="stock"
+                       th:field="*{stock}" placeholder="Stock"
+                        required>
             </div>
 
             <div class="form-group my-2">
-                <label for="imageUrl">Product Picture</label>
+                <label for="file">Product Picture</label>
                 <input
-                        type="file" id="imageUrl" name="file"
+                        type="file" id="file"
+                        name="file"
                         class="form-control-file" required>
             </div>
 
             <div class="form-group my-2">
                 <label for="category">Categories</label>
-                <select class="form-control" id="category" th:field="*{categoryId}">
+                <select class="form-control" id="category"
+                        th:field="*{categoryId}">
                     <option
                             th:each="category : ${categories}"
                             th:value="${category.id}"

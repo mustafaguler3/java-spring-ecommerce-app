@@ -2,17 +2,24 @@ package com.example.thymeleaf_demo.service.Impl;
 
 import com.example.thymeleaf_demo.domain.Category;
 import com.example.thymeleaf_demo.domain.Product;
+import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.CategoryDto;
 import com.example.thymeleaf_demo.dto.ProductDto;
+import com.example.thymeleaf_demo.dto.UserDto;
+import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.CategoryRepository;
 import com.example.thymeleaf_demo.repository.ProductRepository;
 import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,38 +42,36 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getProducts() {
+    public Page<ProductDto> getProducts(Pageable pageable) {
 
-        List<Product> products = productRepository.findAll();
+        Page<Product> products = productRepository.findAll(pageable);
 
-        if (products == null){
-            throw new RuntimeException("Products not found");
+        if (products == null) {
+            throw new ResourceNotFoundException("No products found");
         }
 
-        return products.stream().map(this::convertToDto).collect(Collectors.toList());
+        Page<ProductDto> productDtos =
+                products.map(this::convertToDto);
+
+        return productDtos;
     }
 
     @Override
     public void createProduct(ProductDto productDto) {
+        Category category = categoryRepository.findById(productDto.getCategoryId());
+
+        if (category == null) {
+            throw new ResourceNotFoundException("Category not found");
+        }
+
         Product product = new Product();
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
-        product.setQuantity(productDto.getQuantity());
         product.setDescription(productDto.getDescription());
         product.setStock(product.getStock());
+        product.setBrand(productDto.getBrand());
+        product.setCategory(category);
 
-        Optional<Category> category =
-                categoryRepository.findById(productDto.getCategoryId());
-
-        if (category.isPresent()){
-            product.setCategory(category.get());
-        }else {
-            throw new RuntimeException("Category not found");
-        }
-
-        if (productDto.getImageUrlShow() != null){
-            product.setImageUrl(productDto.getImageUrlShow());
-        }
         MultipartFile multipartFile = productDto.getImageUrl();
 
         if (multipartFile != null){
@@ -79,40 +84,65 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto getProduct(int id) {
-        Optional<Product> product = productRepository.findById(id);
+    public ProductDto getProduct(Long id) {
+        Product product = productRepository.findProductById(id);
 
-        if (product.isPresent()){
-            return product.stream().map(this::convertToDto).findFirst().get();
+        ProductDto productDto = convertToDto(product);
+
+        if (product == null){
+            throw new ResourceNotFoundException("Product not found");
         }
-        return null;
+        return productDto;
     }
 
-    private ProductDto convertToDto(Product product){
+    @Override
+    public void updateProduct(ProductDto productDto) {
+        Product product = productRepository.findProductById(productDto.getId());
+
+        if (product != null){
+            product.setName(productDto.getName());
+            product.setDescription(productDto.getDescription());
+            product.setPrice(productDto.getPrice());
+            product.setStock(productDto.getStock());
+
+
+            if (product.getImageUrl() != null){
+                String fileName = fileStorageService.storeFile(productDto.getImageUrl(),"products");
+                product.setImageUrl(fileName);
+            }
+            productRepository.save(product);
+        }else {
+            throw new ResourceNotFoundException("Product not found");
+        }
+
+
+    }
+
+    private ProductDto convertToDto(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
         productDto.setName(product.getName());
         productDto.setPrice(product.getPrice());
         productDto.setDescription(product.getDescription());
         productDto.setImageUrlShow(product.getImageUrl());
-        productDto.setQuantity(product.getQuantity());
-        productDto.setCategoryId(product.getCategory().getId());
-        productDto.setCategory(product.getCategory());
+        productDto.setBrand(product.getBrand());
         productDto.setStock(product.getStock());
+        productDto.setCategoryId(product.getCategory().getId());
+
+        productDto.setCategory(product.getCategory());
 
         return productDto;
     }
-
-    private Product convertToEntity(ProductDto productDto){
+    private Product convertToEntity(ProductDto productDto) {
         Product product = new Product();
         product.setId(productDto.getId());
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
         product.setDescription(productDto.getDescription());
         product.setImageUrl(productDto.getImageUrlShow());
-        product.setQuantity(productDto.getQuantity());
-        product.setCategory(productDto.getCategory());
+        product.setBrand(productDto.getBrand());
         product.setStock(productDto.getStock());
+         // Set category directly
         return product;
     }
 }
