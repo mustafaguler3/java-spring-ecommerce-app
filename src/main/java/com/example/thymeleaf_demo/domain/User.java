@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
@@ -18,11 +19,12 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @Entity
+@ToString
 public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     @NotBlank(message = "Username must not be blank")
     private String username;
     @NotBlank(message = "Email must not be blank")

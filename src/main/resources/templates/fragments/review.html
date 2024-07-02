@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+        layout:decorate="~{layout.html}">
+<head>
+    <title>Review</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<body>
+
+<div >
+    <div  class="container">
+        <h1>Customer Reviews</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="my-3">
+                    <h4>
+                        <span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                            Based on
+                        <span th:text="${totalReviews}"></span>
+                        reviews
+                    </h4>
+                </div>
+                <div class="mb-4" th:if="${ratingPercentages != null}">
+                    <div th:each="rating, stat : ${#numbers.sequence(5, 1)}" class="d-flex align-items-center mb-2">
+                        <span class="mr-2" th:text="${rating} + ' '">
+                            <span class="text-warning">&#9733;</span>
+                        </span>
+
+                        <div class="rating-bar w-75">
+                            <div class="rating-bar-filled" th:style="'width: ' + ${ratingPercentages[rating-1]} + '%'"></div>
+                        </div>
+                        <span class="ml-2" th:text="${#numbers.formatDecimal(ratingPercentages[rating-1], 0, 0)} + '%'"></span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h4>Share your thoughts</h4>
+                    <form class="form-horizontal" th:action="@{/products/review}" method="post">
+
+                        <fieldset>
+                            <input type="hidden" name="userId" required>
+                            <input type="hidden"  name="productId" required>
+                            <!-- Message body -->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="message">Your message</label>
+                                <div class="col-md-9">
+                                    <textarea class="form-control" id="message" name="comment" placeholder="Please enter your feedback here..." rows="5"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Rating -->
+                            <div class="form-group">
+                                <label for="rating">Your rating</label>
+                                <div id="rating-stars" class="rating-stars">
+                                    <i class="fa fa-star star" data-value="1"></i>
+                                    <i class="fa fa-star star" data-value="2"></i>
+                                    <i class="fa fa-star star" data-value="3"></i>
+                                    <i class="fa fa-star star" data-value="4"></i>
+                                    <i class="fa fa-star star" data-value="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="rating" value="0">
+                            </div>
+                            </td>
+                            <td align="center" valign="top" width="23%">
+                                <!-- Form actions -->
+                                <div class="form-group">
+                                    <div class="col-md-12 text-center">
+                                        <button type="submit" class="btn btn-primary btn-md">Submit</button>
+                                        <button type="reset" class="btn btn-default btn-md">Clear</button>
+                                    </div>
+                                </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6" th:if="${reviews != null}">
+                <div th:each="review : ${reviews}" class="review-container">
+                    <div class="d-flex">
+                        <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}" alt="User Image" class="rounded-circle mr-3" style="width: 60px; height: 60px;">
+
+                        <div>
+                            <h5 th:text="${review.username}"></h5>
+                            <p class="text-warning">
+                                <span th:each="i : ${#numbers.sequence(1, review.rating)}">&#9733;</span>
+                                <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}">&#9734;</span>
+                            </p>
+                            <p th:text="${review.comment}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+</body>
+</html>

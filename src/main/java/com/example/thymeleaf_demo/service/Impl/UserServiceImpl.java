@@ -16,6 +16,7 @@ import com.example.thymeleaf_demo.repository.VerificationTokenRepository;
 import com.example.thymeleaf_demo.service.EmailService;
 import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.UserService;
+import com.example.thymeleaf_demo.util.DTOConverter;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -52,6 +53,9 @@ public class UserServiceImpl implements UserService {
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
+    @Autowired
+    private DTOConverter dtoConverter;
+
 
     @Override
     public void saveUser(UserDto userDto)  {
@@ -191,12 +195,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(UserDto userDto) {
-        userRepository.deleteById(userDto.getId());
+        userRepository.deleteById((long) userDto.getId());
     }
 
     @Override
     public void updateUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId())
+        User user = userRepository.findById((long) userDto.getId())
                 .orElse(null);
 
         if (user != null){
@@ -217,10 +221,8 @@ public class UserServiceImpl implements UserService {
         if (user == null){
             return null;
         }
-
-        UserDto dto = convertToDto(user);
-
-        return dto;
+;
+        return dtoConverter.convertToDto(user);
     }
 
     @Override
@@ -228,7 +230,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email);
 
         if (user != null){
-            return convertToDto(user);
+            return dtoConverter.convertToDto(user);
         }
 
         return null;
@@ -239,6 +241,7 @@ public class UserServiceImpl implements UserService {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
+        userDto.setPassword(user.getPassword()); // Set the password as plain text for security reasons
         userDto.setDescription(user.getDescription());
         userDto.setIsEnabled(user.getIsEnabled()); // Convert Boolean field
         userDto.setProfilePictureUrl(user.getProfilePicture()); // Set the profile picture URL
@@ -250,10 +253,11 @@ public class UserServiceImpl implements UserService {
         user.setId(userDto.getId());
         user.setUsername(userDto.getUsername());
         user.setDescription(userDto.getDescription());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
         user.setIsEnabled(userDto.getIsEnabled());
         user.setProfilePicture(userDto.getProfilePictureUrl()); // Set the profile picture URL
+
         return user;
     }
 }

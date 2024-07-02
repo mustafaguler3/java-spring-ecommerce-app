@@ -8,11 +8,12 @@ import jakarta.persistence.ManyToMany;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class CategoryDto {
 
     private Long id;
     private String name;
-    private List<Product> products;
+    private Set<Product> products;
 }

@@ -27,6 +27,7 @@ public class SecurityConfig {
             "/register/**",
             "/register",
             "/",
+            "/products/review",
             "/home",
             "/products/**",
             "/forgot-password",

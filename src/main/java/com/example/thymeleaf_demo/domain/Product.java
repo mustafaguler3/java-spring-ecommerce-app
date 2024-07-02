@@ -24,6 +24,7 @@ public class Product {
     private int stock;
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<Review>();
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

@@ -65,36 +65,10 @@ public class ThymeleafDemoApplication {
 
 		return modelMapper;
 	}
-	@Bean
-	public JavaMailSender mailSender(){
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost("smtp.gmail.com");
-		mailSender.setPort(587);
-
-		mailSender.setUsername("mustafaguler4@gmail.com");
-		mailSender.setPassword("dlkm bzsl muyl yhdb");
-
-		Properties props = mailSender.getJavaMailProperties();
-		props.put("mail.transport.protocol", "smtp");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.debug", "true");
-
-		return mailSender;
-	}
+	//mail sender
 
 	/*@Override
 	public void run(String... args) throws Exception {
-		List<Product> products = Arrays.asList(
-				new Product("Abra A5","Abra A5 V20.4.4 Intel Core i5 12450H 16 GB RAM 1 TB SSD 6 GB RTX 4050 FreeDos 15,6\" FHD 144 Hz",new BigDecimal(2500),"7.webp",categoryRepository.findById(1L),"Monster"),
-				new Product("Excalibur G770","Excalibur G770.1245-BVJ0X-B Intel Core İ5-12450H 16GB RAM 500GB NVME SSD Gen4 4GB RTX3050 Freedos",new BigDecimal(3000),"9.webp",categoryRepository.findById(1L),"Casper"),
-				new Product("Macbook Air M1","Macbook Air M1 Çip 8gb 256gb Ssd Macos 13\" Qhd Taşınabilir Bilgisayar Uzay Grisi",new BigDecimal(4500),"10.webp",categoryRepository.findById(1L),"Apple"),
-		new Product("Macbook Air M2","Macbook Air 13.6\" M2 8c Gpu 8 Gb 256 Gb Ssd Yıldız Işığı",new BigDecimal(4200),"11.webp",categoryRepository.findById(1L),"Apple"),
-		new Product("Iphone 12","iPhone 12 128 GB Mor Cep Telefonu Aksesuarsız Kutu",new BigDecimal(2500),"12.webp",categoryRepository.findById(2L),"Apple"),
-		new Product("Iphone 13","iPhone 13 128 GB Yıldız Işığı Cep Telefonu",new BigDecimal(3000),"13.webp",categoryRepository.findById(2L),"Apple"),
-		new Product("Redmi 12","Redmi 12 128 GB 8 GB RAM Siyah Cep Telefonu",new BigDecimal(3270),"14.webp",categoryRepository.findById(2L),"Xiaomi"),
-		new Product("Galaxy Tab A9","Galaxy Tab A9 8 GB RAM 128 GB Grafit",new BigDecimal(4350),"15.webp",categoryRepository.findById(3L),"Samsung")
-		);
 
 		List<Category> category = Arrays.asList(
 				new Category("Computer"),
@@ -102,6 +76,22 @@ public class ThymeleafDemoApplication {
 				new Category("Tablet")
 		);
 		categoryRepository.saveAll(category);
+
+		Category computer = categoryRepository.findByName("Computer");
+		Category phone = categoryRepository.findByName("Phone");
+		Category tablet = categoryRepository.findByName("Tablet");
+
+		List<Product> products = Arrays.asList(
+				new Product("Abra A5","Abra A5 V20.4.4 Intel Core i5 12450H 16 GB RAM 1 TB SSD 6 GB RTX 4050 FreeDos 15,6\" FHD 144 Hz",new BigDecimal(2500),"7.webp",computer,"Monster"),
+				new Product("Excalibur G770","Excalibur G770.1245-BVJ0X-B Intel Core İ5-12450H 16GB RAM 500GB NVME SSD Gen4 4GB RTX3050 Freedos",new BigDecimal(3000),"9.webp",computer,"Casper"),
+				new Product("Macbook Air M1","Macbook Air M1 Çip 8gb 256gb Ssd Macos 13\" Qhd Taşınabilir Bilgisayar Uzay Grisi",new BigDecimal(4500),"10.webp",computer,"Apple"),
+				new Product("Macbook Air M2","Macbook Air 13.6\" M2 8c Gpu 8 Gb 256 Gb Ssd Yıldız Işığı",new BigDecimal(4200),"11.webp",computer,"Apple"),
+				new Product("Iphone 12","iPhone 12 128 GB Mor Cep Telefonu Aksesuarsız Kutu",new BigDecimal(2500),"12.webp",phone,"Apple"),
+				new Product("Iphone 13","iPhone 13 128 GB Yıldız Işığı Cep Telefonu",new BigDecimal(3000),"13.webp",phone,"Apple"),
+				new Product("Redmi 12","Redmi 12 128 GB 8 GB RAM Siyah Cep Telefonu",new BigDecimal(3270),"14.webp",phone,"Xiaomi"),
+				new Product("Galaxy Tab A9","Galaxy Tab A9 8 GB RAM 128 GB Grafit",new BigDecimal(4350),"15.webp",tablet,"Samsung")
+		);
+
 		productRepository.saveAll(products);
 	}*/
 }

@@ -3,7 +3,7 @@ package com.example.thymeleaf_demo.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
+//@Entity
 @Table(name = "authorities")
 @Data
 public class Authority { // READ , Update , DELETE

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .review {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .review img {
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .review-text {
+            max-width: 500px;
+        }
+        .progress-bar {
+            background-color: #ff0;
+        }
+        .star {
+            color: gold;
+        }
+    </style>
+</head>
+<body layout:fragment="mainContent">
+
+<div class="container mt-5">
+    <h2>How students rated this courses</h2>
+    <div class="d-flex align-items-center mb-4">
+        <div class="display-4" th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">4.5</div>
+        <div class="ml-3">
+            <span class="star" th:each="i : ${#numbers.sequence(1, 5)}">★</span>
+            <div th:text="'(Based on ' + ${totalReviews} + ' reviews)'">Based on 27 reviews</div>
+        </div>
+    </div>
+    <div>
+        <div class="d-flex align-items-center mb-1">
+            <div class="star">★★★★★</div>
+            <div class="progress flex-fill mx-2">
+                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${percent5Star} + '%'" th:aria-valuenow="${percent5Star}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div th:text="${#numbers.formatDecimal(percent5Star, 0, 0)} + '%'">53%</div>
+        </div>
+        <div class="d-flex align-items-center mb-1">
+            <div class="star">★★★★</div>
+            <div class="progress flex-fill mx-2">
+                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${percent4Star} + '%'" th:aria-valuenow="${percent4Star}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div th:text="${#numbers.formatDecimal(percent4Star, 0, 0)} + '%'">36%</div>
+        </div>
+        <div class="d-flex align-items-center mb-1">
+            <div class="star">★★★</div>
+            <div class="progress flex-fill mx-2">
+                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${percent3Star} + '%'" th:aria-valuenow="${percent3Star}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div th:text="${#numbers.formatDecimal(percent3Star, 0, 0)} + '%'">9%</div>
+        </div>
+        <div class="d-flex align-items-center mb-1">
+            <div class="star">★★</div>
+            <div class="progress flex-fill mx-2">
+                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${percent2Star} + '%'" th:aria-valuenow="${percent2Star}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div th:text="${#numbers.formatDecimal(percent2Star, 0, 0)} + '%'">3%</div>
+        </div>
+        <div class="d-flex align-items-center mb-1">
+            <div class="star">★</div>
+            <div class="progress flex-fill mx-2">
+                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${percent1Star} + '%'" th:aria-valuenow="${percent1Star}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div th:text="${#numbers.formatDecimal(percent1Star, 0, 0)} + '%'">2%</div>
+        </div>
+    </div>
+    <hr>
+    <h3>Reviews</h3>
+    <div th:each="review : ${reviews}">
+        <div class="review">
+            <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}"
+                 alt="User Image" width="50" height="50">
+            <div class="review-text">
+                <h5 th:text="${review.username}">User Name</h5>
+                <div>
+                    <span class="star" th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
+                    <span class="text-muted" th:text="${#dates.format(review.publishedDate, 'yyyy-MM-dd')}"></span>
+                </div>
+                <p th:text="${review.comment}">Review Text</p>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm">Yes</button>
+                    <button class="btn btn-outline-secondary btn-sm">No</button>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+
+</body>
+</html>

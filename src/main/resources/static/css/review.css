@@ -1,0 +1,52 @@
+.review {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-name {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.user-rating .fa-star {
+    color: gold;
+}
+
+.user-comment {
+    margin-top: 5px;
+}
+
+.user-country {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.published-date {
+    font-size: 0.8em;
+    color: #aaa;
+}
+
+.star-rating {
+    direction: rtl;
+    display: inline-block;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    color: #bbb;
+    font-size: 1.5em;
+    padding: 0 0.1em;
+    cursor: pointer;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+    color: gold;
+}

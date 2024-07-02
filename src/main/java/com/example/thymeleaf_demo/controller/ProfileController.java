@@ -89,7 +89,7 @@ public class ProfileController {
            userService.updateUser(userDto);
 
            // retrieve updated user information
-           UserDto updatedUser = userService.findById((int) userDto.getId());
+           UserDto updatedUser = userService.findById(Math.toIntExact(userDto.getId()));
            model.addAttribute("currentUser",updatedUser);
 
            model.addAttribute("success","Profile updated successfully");

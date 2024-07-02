@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
 @Log4j2
@@ -40,6 +41,22 @@ public class GlobalExceptionHandler {
             UserDto currentUser = userService.findByUsername(username);
             model.addAttribute("currentUser", currentUser);
         }
+    }
+
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ModelAndView handleResourceNotFoundException(MethodArgumentTypeMismatchException exception) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        if (exception.getStackTrace().length > 0){
+            StackTraceElement element = exception.getStackTrace()[0];
+            logger.error("Exception occurred in class: {}, method: {}, line: {}",
+                    element.getClassName(), element.getMethodName(), element.getLineNumber());
+        }
+        modelAndView.addObject("message",exception.getMessage());
+        modelAndView.addObject("exception",exception.fillInStackTrace());
+        modelAndView.setViewName("error");
+        return modelAndView;
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

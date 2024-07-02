@@ -2,19 +2,68 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout.html}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        <style>
+        body {
+            background-color: #000;
+            color: #fff;
+        }
+        .rating-bar {
+            height: 10px;
+            background-color: #555;
+        }
+        .rating-bar-filled {
+            height: 10px;
+            background-color: #f39c12;
+        }
+        .review-container {
+            background-color: ghostwhite;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .review {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .review img {
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .review-text {
+            max-width: 500px;
+        }
+        .progress-bar {
+            background-color: #ff0;
+        }
+        .star {
+            font-size: 2em;
+        color: #ddd;
+        }
+    .star.checked {
+        color: gold;
+    }
+    </style>
 </head>
 <body layout:fragment="mainContent">
 
 <!-- Product section-->
 <section class="py-5">
     <div class="container px-4 px-lg-5 my-5" th:if="${product != null}">
+
         <div class="row gx-4 gx-lg-5 align-items-center">
-            <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0"
-                                       th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}" width="100%" height="100%" alt="..." /></div>
+            <div class="col-md-6">
+                <img class="card-img-top mb-5 mb-md-0"
+                                       th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
+                     width="100%" height="100%" alt="..." />
+            </div>
             <div class="col-md-6">
                 <div class="small badge badge-sm badge-danger" th:text="${product.brand}"></div>
                 <h1 class="display-5 fw-bolder" th:text="${product.name}"></h1>
@@ -25,7 +74,8 @@
                 </div>
                 <p class="lead" th:text="${product.description}"></p>
                 <div class="d-flex">
-                    <input class="form-control text-center me-3" id="inputQuantity" type="number" value="1" style="max-width: 3rem" />
+                    <input class="form-control text-center me-3" id="inputQuantity"
+                           type="number" value="1" style="max-width: 3rem" />
                     <button class="btn btn-outline-dark flex-shrink-0" type="button">
                         <i class="bi-cart-fill me-1"></i>
                         Add to cart
@@ -34,8 +84,126 @@
             </div>
         </div>
     </div>
+
+    <hr>
+
+    <div th:if="${message}"><h1 th:text="${message}"></h1></div>
+    <div th:if="${error}"><h1 th:text="${error}"></h1></div>
+    <br>
+
+    <div>
+        <div  class="container">
+            <h1>Customer Reviews</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="my-3">
+                        <h4>
+                            <span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                            Based on
+                            <span th:text="${totalReviews}"></span>
+                            reviews
+                        </h4>
+                    </div>
+                    <div class="mb-4" th:if="${ratingPercentages != null}">
+                        <div th:each="rating, stat : ${#numbers.sequence(5, 1)}"
+                             class="d-flex align-items-center mb-2">
+                        <span class="mr-2" th:text="${rating} + ' '">
+                            <span class="text-warning">&#9733;</span>
+                        </span>
+
+                            <div class="rating-bar w-75">
+                                <div class="rating-bar-filled" th:style="'width: ' + ${ratingPercentages[rating-1]} + '%'"></div>
+                            </div>
+                                <span class="ml-2" th:text="${#numbers.formatDecimal(ratingPercentages[rating-1], 0, 0)} + '%'"></span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h4>Share your thoughts</h4>
+                        <form class="form-horizontal"
+                              th:action="@{/products/review}" method="post">
+
+                            <input type="hidden"  name="id" th:value="${productId}">
+                            <input type="hidden" name="currentUser" th:value="${currentUser}">
+
+                            <!-- Message body -->
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="message">Your message</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" id="message"
+                                                  name="comment" placeholder="Please enter your feedback here..." rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <!-- Rating -->
+                                <div class="form-group">
+                                    <label for="rating">Your rating</label>
+                                    <div id="rating-stars" class="rating-stars">
+                                        <i class="fa fa-star star" data-value="1"></i>
+                                        <i class="fa fa-star star" data-value="2"></i>
+                                        <i class="fa fa-star star" data-value="3"></i>
+                                        <i class="fa fa-star star" data-value="4"></i>
+                                        <i class="fa fa-star star" data-value="5"></i>
+                                    </div>
+                                    <input type="hidden" name="rating" id="rating" min="1" max="5" required>
+                                </div>
+                                    <!-- Form actions -->
+                                    <div class="form-group">
+                                        <div class="col-md-12 text-center">
+                                            <button type="submit" class="btn btn-primary btn-md">Submit</button>
+                                            <button type="reset" class="btn btn-default btn-md">Clear</button>
+                                        </div>
+                                    </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6" th:if="${reviews != null}">
+                    <div th:each="review : ${reviews}" class="review-container">
+                        <div class="d-flex">
+                            <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}" alt="User Image" class="rounded-circle mr-3" style="width: 60px; height: 60px;">
+
+                            <div>
+                                <h5 th:text="${review.username}"></h5>
+                                <p class="text-warning">
+                                    <span th:each="i : ${#numbers.sequence(1, review.rating)}">&#9733;</span>
+                                    <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}">&#9734;</span>
+                                </p>
+                                <p th:text="${review.comment}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div th:if="${success}">
+    <div th:text="${success}"></div>
+</div>
 </section>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                const ratingValue = this.getAttribute('data-value');
+                ratingInput.value = ratingValue;
+                updateStarColors(ratingValue);
+            });
+        });
+
+        function updateStarColors(ratingValue) {
+            stars.forEach(star => {
+                if (parseInt(star.getAttribute('data-value')) <= ratingValue) {
+                    star.classList.add('checked');
+                } else {
+                    star.classList.remove('checked');
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
