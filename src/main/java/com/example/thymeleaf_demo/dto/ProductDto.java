@@ -25,4 +25,5 @@ public class ProductDto {
     private Long categoryId;
     private List<ReviewDto> reviews = new ArrayList<ReviewDto>();
     private Category category;
+    private double averageRating;
 }

@@ -62,10 +62,17 @@ public class HomeController {
     @GetMapping(value = {"/","home"})
     public String home(Model model,
                        @RequestParam(name = "page",defaultValue = "0") int pageNumber,
-                       @RequestParam(name = "size",defaultValue = "6") int pageSize){
+                       @RequestParam(name = "size",defaultValue = "6") int pageSize
+                       ){
 
         Page<ProductDto> products =
                 productService.getProducts(PageRequest.of(pageNumber, pageSize));
+
+        products.forEach(product -> {
+            double averageRating = reviewService.getAverageRating(product.getId());
+            product.setAverageRating(averageRating);
+        });
+
 
         if (products == null || products.isEmpty()){
             model.addAttribute("error", "No products found");

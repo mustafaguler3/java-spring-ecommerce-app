@@ -52,6 +52,20 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.groupingBy(Review::getRating,Collectors.counting()));
     }
 
+    @Override
+    public double getAverageRating(Long productId) {
+        List<Review> reviews = reviewRepository.findByProductId(productId);
+
+        List<ReviewDto> reviewDtos =
+                reviews.stream().map(review -> dtoConverter.convertToReviewDTO(review))
+                .toList();
+
+        return reviewDtos.stream()
+                .mapToInt(ReviewDto::getRating)
+                .average()
+                .orElse(0.0);
+    }
+
     public ReviewStatistics calculateStatistics(List<ReviewDto> reviews) {
         int totalReviews = reviews.size();
         double averageRating = reviews.stream().mapToInt(ReviewDto::getRating).average().orElse(0);
@@ -92,9 +106,6 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(review -> dtoConverter.convertToReviewDTO(review))
                 .collect(Collectors.toList());
     }
-
-
-
     public void saveReview(ReviewDto reviewDto) {
 
         Review review = new Review();

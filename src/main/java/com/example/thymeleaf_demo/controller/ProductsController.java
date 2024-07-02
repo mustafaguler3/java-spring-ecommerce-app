@@ -72,7 +72,6 @@ public class ProductsController {
             model.addAttribute("error", "Product not found");
             return "product-detail";
         }
-
         // Calculate the percentages for each rating
         int[] ratingCounts = new int[5];
         for (ReviewDto review : reviews) {

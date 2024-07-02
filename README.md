@@ -18,3 +18,6 @@ Edit Profile Page
 
 Home page
 ![img_8.png](img_8.png)
+
+Average Review
+![img_9.png](img_9.png)

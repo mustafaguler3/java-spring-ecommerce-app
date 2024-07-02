@@ -104,6 +104,7 @@
                             reviews
                         </h4>
                     </div>
+                    <div th:text="${ratingCounts}"></div>
                     <div class="mb-4" th:if="${ratingPercentages != null}">
                         <div th:each="rating, stat : ${#numbers.sequence(5, 1)}"
                              class="d-flex align-items-center mb-2">

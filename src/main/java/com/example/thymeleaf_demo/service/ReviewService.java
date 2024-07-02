@@ -15,4 +15,5 @@ public interface ReviewService {
     ReviewServiceImpl.ReviewStatistics calculateStatistics(List<ReviewDto> reviews);
     List<ReviewDto> getReviewsByProduct(ProductDto productDto);
     Map<Integer, Long> getRatingCountsByProduct(ProductDto productDto);
+    double getAverageRating(Long productId);
 }

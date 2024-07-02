@@ -9,7 +9,32 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
           integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
           crossorigin="anonymous">
-
+    <style>
+        .stars-outer {
+            display: inline-block;
+            position: relative;
+            font-family: FontAwesome;
+        }
+        .stars-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            color: #f8ce0b;
+        }
+        .stars-outer::before {
+            content: "\f005 \f005 \f005 \f005 \f005";
+            color: #ccc;
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+        }
+        .stars-inner::before {
+            content: "\f005 \f005 \f005 \f005 \f005";
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+        }
+    </style>
 </head>
 <body layout:fragment="mainContent">
 
@@ -34,19 +59,17 @@
                              alt="product-image" class="card-img-top" style="width:100%; height:100%">
                     </a>
                     <div class="card-footer border-top border-light p-4">
-                        <a href="#" class="h5" th:text="${product.name}">Apple Watch Series 3</a>
+                        <a href="#" class="h5" th:text="${product.name}"></a>
                         <h6 class="font-weight-light text-gray mt-2" th:text="${product.description}">
-                            Space Gray Aluminum Case with Black Sport Band</h6>
+                            </h6>
                         <div class="d-flex mt-3">
-                            <i class="star fas fa-star text-warning mr-1"></i>
-                            <i class="star fas fa-star text-warning mr-1"></i>
-                            <i class="star fas fa-star text-warning mr-1"></i>
-                            <i class="star fas fa-star text-warning mr-1"></i>
-                            <i class="star fas fa-star text-warning"></i>
-                            <span class="badge badge-pill badge-gray ml-2">4.7</span>
+                            <div class="stars-outer">
+                                <div class="stars-inner" th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                            </div>
+                            <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.7</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="h5 mb-0 text-gray" th:text="${product.price}">$299.00</span>
+                            <span class="h5 mb-0 text-gray" th:text="${product.price}"></span>
                             <a class="btn btn-xs btn-primary" href="#">
                                 <span class="fas fa-cart-plus mr-2"></span> Add to cart
                             </a>
