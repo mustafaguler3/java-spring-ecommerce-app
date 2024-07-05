@@ -54,8 +54,8 @@ public class WishlistController {
             return "home";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            return "home"; // Redirect to products page or wherever appropriate
         }
+        return "redirect:/home";
     }
 
     @PostMapping("/wishlist/remove/{productId}")
