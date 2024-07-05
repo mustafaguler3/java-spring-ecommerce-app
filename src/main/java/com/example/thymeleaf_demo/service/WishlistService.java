@@ -13,7 +13,5 @@ public interface WishlistService {
     Wishlist addProductToWishlist(Long userId,Long productId);
     void removeProductFromWishlist(Long userId,Long productId);
     List<WishlistDto> getWishlistForUser(Long userId);
-    List<WishlistDto> getAllWishlist();
-
     boolean isProductInWishlist(Long userId, Long productId);
 }

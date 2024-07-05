@@ -178,8 +178,8 @@
                   </div>
                 </div>
               </td>
-              <td width="15%" class="price" th:text="${item.price}">$110.00</td>
-              <td width="15%"><span class="in-stock-box" th:text="${item.stock}">In Stock</span></td>
+              <td width="15%" class="price" th:text="${item.price}"></td>
+              <td width="15%"><span class="in-stock-box" th:text="${item.stock}"></span></td>
               <td width="15%"><button class="round-black-btn small-btn">Add to Cart</button></td>
               <td width="10%" class="text-center"><a href="#" class="trash-icon"><i class="far fa-trash-alt"></i></a></td>
             </tr>
@@ -192,8 +192,8 @@
   </div>
 </div>
 
-<div th:if="${wishlist == null}">
-  <p>No wishlist items found</p>
+<div th:if="${wishlist == null}" class="d-flex justify-content-center">
+  <p class="alert alert-sm alert-danger">No wishlist items found</p>
 </div>
 
 

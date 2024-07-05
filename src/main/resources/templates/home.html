@@ -122,9 +122,13 @@
                         </div>
 
                         <div class="wishlist position-absolute" style="top:0.5rem; right:0.5rem">
-                            <button class="wishlist-button" th:attr="data-product-id=${product.id}">
+                            <!--<button class="wishlist-button" th:attr="data-product-id=${product.id}">
                                 <i class="fa fa-heart heart" th:classappend="${product.inWishlist} ? 'red' : ''"></i>
-                            </button>
+                            </button> -->
+                            <a class="wishlist-button" th:attr="data-product-id=${product.id}"
+                               th:classappend="${product.inWishlist} ? ' active' : ''">
+                                <i class="fa fa-heart" th:classappend="${product.inWishlist} ? 'red' : ''"></i>
+                            </a>
                         </div>
 
 
@@ -172,27 +176,49 @@
     </div>
 </div>
 
+
 <script>
     $(document).ready(function() {
-        $('.wishlist-button').click(function() {
+        $('.wishlist-button').click(function(event) {
+            event.preventDefault();
             var $button = $(this);
             var productId = $button.data('product-id');
-            $.post("/wishlist/add", { productId: productId })
-                .done(function(data) {
-                    alert("Product added to wishlist successfully!");
-                    $button.find('.fa-heart').addClass('red');
-                })
-                .fail(function(xhr, status, error) {
-                    alert("Error: " + xhr.responseText);
+            var isInWishlist = $button.find('.fa-heart').hasClass('red');
+            if (isInWishlist) {
+                // Remove from wishlist
+                $.ajax({
+                    url: "/wishlist/remove/" + productId,
+                    type: 'DELETE',
+                    success: function(data) {
+                        alert(data.message);
+                        $button.find('.fa-heart').removeClass('red');
+                        $button.removeClass('active');
+                        $button.data('inWishlist', false);
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error: " + xhr.responseText);
+                    }
                 });
+            } else {
+                // Add to wishlist
+                $.post("/wishlist/add/" + productId)
+                    .done(function(data) {
+                        alert(data.message);
+                        $button.find('.fa-heart').addClass('red');
+                        $button.addClass('active');
+                        $button.data('inWishlist', true);
+                    })
+                    .fail(function(xhr, status, error) {
+                        alert("Error: " + xhr.responseText);
+                    });
+            }
         });
     });
 </script>
 
 
 
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

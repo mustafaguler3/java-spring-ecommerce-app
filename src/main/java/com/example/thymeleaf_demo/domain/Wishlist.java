@@ -2,12 +2,16 @@ package com.example.thymeleaf_demo.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "wishlist", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","product_id"}))
 public class Wishlist {
 

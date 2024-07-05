@@ -41,37 +41,60 @@ public class WishlistController {
     }
 
 
-    @PostMapping("/wishlist/add")
+    @PostMapping("/wishlist/add/{productId}")
     public String addProductToWishlist(
-            @RequestParam Long productId, Model model) {
+            @PathVariable Long productId, Model model) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             Long userId = userDetails.getUser().getId();// Assuming UserDetails has a method to get user ID
 
-            Wishlist wishlist = wishlistService.addProductToWishlist(userId, productId);
+            wishlistService.addProductToWishlist(userId, productId);
             model.addAttribute("message", "Product added to wishlist successfully");
-            return "home";
+            return "redirect:/wishlist";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
         return "redirect:/home";
     }
 
-    @PostMapping("/wishlist/remove/{productId}")
-    @ResponseBody
-    public ResponseEntity<?> removeProductFromWishlist(@PathVariable("productId") Long productId,
-                                                            Authentication authentication){
-        if (authentication == null || !authentication.isAuthenticated()){
+    /*@DeleteMapping("/wishlist/remove/{productId}")
+    public String removeFromWishlist(@PathVariable("productId") Long productId,
+                                                Model model) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            Long userId = userDetails.getUser().getId();// Assuming UserDetails has a method to get user ID
+
+            wishlistService.removeProductFromWishlist(userId, productId);
+            model.addAttribute("message", "Product added to wishlist successfully");
+            return "redirect:/wishlist";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "redirect:/home";
+    }*/
+    @DeleteMapping("/wishlist/remove/{productId}")
+    public ResponseEntity<?> removeFromWishlist(@PathVariable("productId") Long productId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     Map.of("message", "User not authenticated")
             );
         }
+
         UserDto userDto = userService.findByUsername(authentication.getName());
-        wishlistService.removeProductFromWishlist(userDto.getId(), productId);
+
+        try {
+            wishlistService.removeProductFromWishlist(userDto.getId(), productId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("message", e.getMessage())
+            );
+        }
 
         return ResponseEntity.ok(Map.of("message", "Product removed from wishlist"));
     }
+
 
     @GetMapping("/wishlist")
     public String showUserWi(Model model, Authentication authentication) {

@@ -55,9 +55,21 @@ public class WishlistServiceImpl implements WishlistService {
         return wishlistRepository.save(wishlist);
         }
 
-    @Override
-    public void removeProductFromWishlist(Long userId,Long productId) {
 
+
+        @Transactional
+        @Override
+        public void removeProductFromWishlist(Long userId,Long productId) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            Product product = productRepository.findById(Math.toIntExact(productId))
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+
+            Wishlist wishlist = wishlistRepository.findByUserAndProduct(user, product)
+                    .orElseThrow(() -> new RuntimeException("Wishlist item not found"));
+
+            wishlistRepository.deleteByProductId(productId);
 
     }
 
@@ -77,14 +89,6 @@ public class WishlistServiceImpl implements WishlistService {
                    return wishlistDto;
                })
                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<WishlistDto> getAllWishlist() {
-        return wishlistRepository.findAll()
-                .stream()
-                .map(dtoConverter::convertToDto)
-                .collect(Collectors.toList());
     }
 
     @Override
