@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ProductService {
     Page<ProductDto> getProducts(Pageable pageable);
+    Page<ProductDto> getProducts(Pageable pageable,Long userId);
     void createProduct(ProductDto productDto);
     ProductDto getProduct(Long id);
     void updateProduct(ProductDto productDto);

@@ -2,10 +2,7 @@ package com.example.thymeleaf_demo.service.Impl;
 
 import com.example.thymeleaf_demo.domain.Category;
 import com.example.thymeleaf_demo.domain.Product;
-import com.example.thymeleaf_demo.domain.User;
-import com.example.thymeleaf_demo.dto.CategoryDto;
 import com.example.thymeleaf_demo.dto.ProductDto;
-import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.CategoryRepository;
 import com.example.thymeleaf_demo.repository.ProductRepository;
@@ -14,15 +11,9 @@ import com.example.thymeleaf_demo.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -34,7 +25,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository,
-                              CategoryRepository categoryRepository, FileStorageService fileStorageService, ModelMapper modelMapper) {
+                              CategoryRepository categoryRepository,
+                              FileStorageService fileStorageService,
+                              ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.fileStorageService = fileStorageService;
@@ -53,6 +46,19 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductDto> productDtos =
                 products.map(this::convertToDto);
 
+        return productDtos;
+    }
+
+    @Override
+    public Page<ProductDto> getProducts(Pageable pageable, Long userId) {
+        Page<Product> products = productRepository.findAll(pageable);
+        Page<ProductDto> productDtos = products.map(product -> {
+            ProductDto productDto = new ProductDto();
+
+
+
+            return productDto;
+        });
         return productDtos;
     }
 

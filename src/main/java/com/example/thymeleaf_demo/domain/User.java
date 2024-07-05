@@ -5,26 +5,27 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
-@Data
+
 @AllArgsConstructor
 @Entity
+@Getter
+@Setter
 @ToString
 public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     @NotBlank(message = "Username must not be blank")
     private String username;
     @NotBlank(message = "Email must not be blank")
@@ -37,6 +38,9 @@ public class User{
     @Size(min = 10,max = 1000)
     private String description;
     private String profilePicture;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
+    private Set<Wishlist> wishlists = new HashSet<>();
 
     /*@OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Cart cart;*/
@@ -59,6 +63,9 @@ public class User{
     }
 
 
+    public User(Long id) {
+        this.id = id;
+    }
 }
 
 

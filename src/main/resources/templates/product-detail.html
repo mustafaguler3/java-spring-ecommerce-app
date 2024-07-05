@@ -50,6 +50,30 @@
     .star.checked {
         color: gold;
     }
+        .stars-outer {
+            display: inline-block;
+            position: relative;
+            font-family: FontAwesome;
+        }
+        .stars-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            color: #f8ce0b;
+        }
+        .stars-outer::before {
+            content: "\f005 \f005 \f005 \f005 \f005";
+            color: #ccc;
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+        }
+        .stars-inner::before {
+            content: "\f005 \f005 \f005 \f005 \f005";
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+        }
     </style>
 </head>
 <body layout:fragment="mainContent">
@@ -67,10 +91,20 @@
             <div class="col-md-6">
                 <div class="small badge badge-sm badge-danger" th:text="${product.brand}"></div>
                 <h1 class="display-5 fw-bolder" th:text="${product.name}"></h1>
-                <small th:text="${product.category.name}"></small>
+                <small class="badge badge-sm badge-dark p-0" th:text="${product.category.name}"></small>
+
+                <div class="d-flex mt-3">
+                    <div class="stars-outer">
+                        <div class="stars-inner"
+                             th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                    </div>
+                    <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.7</span>
+                </div>
+
+
                 <div class="fs-5 mb-5">
-                    <span class="text-decoration-line-through" th:text="${product.price}">$45.00</span>
-                    <span>$40.00</span>
+                    <span th:text="${product.price}">$45.00</span>
+                    <!-- <span class="text-decoration-line-through">$40.00</span> -->
                 </div>
                 <p class="lead" th:text="${product.description}"></p>
                 <div class="d-flex">
@@ -104,7 +138,6 @@
                             reviews
                         </h4>
                     </div>
-                    <div th:text="${ratingCounts}"></div>
                     <div class="mb-4" th:if="${ratingPercentages != null}">
                         <div th:each="rating, stat : ${#numbers.sequence(5, 1)}"
                              class="d-flex align-items-center mb-2">

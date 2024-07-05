@@ -5,11 +5,34 @@
       layout:decorate="~{layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
-          crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>Product Listing</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        .card-img-top {
+            max-height: 150px;
+            object-fit: contain;
+        }
+        .sidebar {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #dee2e6;
+        }
+        .sidebar h5 {
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
         .stars-outer {
             display: inline-block;
             position: relative;
@@ -34,72 +57,142 @@
             font-family: 'Font Awesome 5 Free';
             font-weight: 900;
         }
+
+
+
+        .product {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 16px;
+    width: 300px;
+    text-align: center;
+    position: relative;
+}
+
+.product-name {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+
+        .wishlist-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .wishlist-button .fa-heart {
+            font-size: 24px;
+            color: gray;
+        }
+
+        .wishlist-button .fa-heart.red {
+            color: red;
+        }
+
+
     </style>
 </head>
 <body layout:fragment="mainContent">
 
-<div th:if="${error}">
-    <p th:text="${error}" class="text-danger"></p>
-</div>
-    <div class="container ms-auto">
-        <div class="row">
-            <div class="col-md-4 col-sm-4" th:each="product : ${products}">
-                <!-- card -->
-                <div class="card border-light my-2" style="width:300px;">
-
-                    <div class="badge badge-sm badge-danger position-absolute text-white" th:text="${product.name}" style="top:0.5rem; left:0.5rem">
-                    </div>
-
-                    <div class="position-absolute" style="top:0.5rem; right:0.5rem">
-                        <i class="far fa-heart" style="font-size:20px; cursor:pointer;"></i>
-                    </div>
-
-                    <a th:href="@{/products/{id}(id=${product.id})}" style="cursor:pointer;">
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <h5>Category</h5>
+                <ul th:each="category: ${categories}">
+                    <li><a href="#" th:text="${category.name}">Tüm kategoriler</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4" th:each="product : ${products}">
+                    <div class="card">
                         <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
-                             alt="product-image" class="card-img-top" style="width:100%; height:100%">
-                    </a>
-                    <div class="card-footer border-top border-light p-4">
-                        <a href="#" class="h5" th:text="${product.name}"></a>
-                        <h6 class="font-weight-light text-gray mt-2" th:text="${product.description}">
-                            </h6>
-                        <div class="d-flex mt-3">
-                            <div class="stars-outer">
-                                <div class="stars-inner" th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
-                            </div>
-                            <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.7</span>
+                             class="card-img-top" alt="Laptop Image">
+
+                        <div class="badge badge-sm badge-danger
+                    position-absolute text-white" th:text="${product.name}" style="top:0.5rem; left:0.5rem">
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="h5 mb-0 text-gray" th:text="${product.price}"></span>
-                            <a class="btn btn-xs btn-primary" href="#">
-                                <span class="fas fa-cart-plus mr-2"></span> Add to cart
-                            </a>
+
+                        <div class="wishlist position-absolute" style="top:0.5rem; right:0.5rem">
+                            <button class="wishlist-button" th:attr="data-product-id=${product.id}">
+                                <i class="fa fa-heart heart" th:classappend="${product.inWishlist} ? 'red' : ''"></i>
+                            </button>
+                        </div>
+
+
+
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${product.name}"></h5>
+                            <p class="card-text" th:text="${product.description}"></p>
+                            <p class="card-text" style="font-weight: 700; line-height: 20px;" th:text="${product.price}"></p>
+
+                            <div class="d-flex mt-3">
+                                <div class="stars-outer">
+                                    <div class="stars-inner" th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                                </div>
+                                <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}"></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <a class="btn btn-xs btn-primary" href="#">
+                                    <span class="fas fa-cart-plus mr-2"></span> Add to cart
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- card -->
 
             </div>
         </div>
-
-        <div class="d-flex justify-content-center">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item" th:if="${currentPage > 0}">
-                        <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
-                    </li>
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages - 1)}">
-                        <a class="page-link" th:href="@{/home(page=${i})}"
-                           th:text="${i + 1}"
-                           th:classappend="${i == currentPage} ? 'active' : ''"></a>
-                    </li>
-                    <li class="page-item" th:if="${currentPage < totalPages - 1}">
-                        <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
     </div>
 
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" th:if="${currentPage > 0}">
+                    <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages - 1)}">
+                    <a class="page-link" th:href="@{/home(page=${i})}"
+                       th:text="${i + 1}"
+                       th:classappend="${i == currentPage} ? 'active' : ''"></a>
+                </li>
+                <li class="page-item" th:if="${currentPage < totalPages - 1}">
+                    <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
 
+<script>
+    $(document).ready(function() {
+        $('.wishlist-button').click(function() {
+            var $button = $(this);
+            var productId = $button.data('product-id');
+            $.post("/wishlist/add", { productId: productId })
+                .done(function(data) {
+                    alert("Product added to wishlist successfully!");
+                    $button.find('.fa-heart').addClass('red');
+                })
+                .fail(function(xhr, status, error) {
+                    alert("Error: " + xhr.responseText);
+                });
+        });
+    });
+</script>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

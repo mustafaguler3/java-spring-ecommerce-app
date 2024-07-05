@@ -3,9 +3,11 @@ package com.example.thymeleaf_demo.util;
 import com.example.thymeleaf_demo.domain.Product;
 import com.example.thymeleaf_demo.domain.Review;
 import com.example.thymeleaf_demo.domain.User;
+import com.example.thymeleaf_demo.domain.Wishlist;
 import com.example.thymeleaf_demo.dto.ProductDto;
 import com.example.thymeleaf_demo.dto.ReviewDto;
 import com.example.thymeleaf_demo.dto.UserDto;
+import com.example.thymeleaf_demo.dto.WishlistDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,6 +39,7 @@ public class DTOConverter {
         product.setPrice(productDto.getPrice());
         product.setCategory(productDto.getCategory());
 
+
         List<Review> reviews = productDto.getReviews()
                         .stream()
                                 .map(review -> convertToReview(review))
@@ -55,6 +59,12 @@ public class DTOConverter {
         productDTO.setBrand(product.getBrand());
         productDTO.setImageUrlShow(product.getImageUrl());
         productDTO.setStock(product.getStock());
+
+        Set<WishlistDto> wishlistDtos =
+                product.getWishlists()
+                                .stream()
+                                        .map(this::convertToDto)
+                                                .collect(Collectors.toSet());
 
         List<ReviewDto> reviewDTOs =
                 product.getReviews().stream()
@@ -96,7 +106,7 @@ public class DTOConverter {
 
     public UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
+        userDto.setId((long) user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
@@ -116,6 +126,20 @@ public class DTOConverter {
         user.setIsEnabled(userDto.getIsEnabled());
         user.setProfilePicture(userDto.getProfilePictureUrl()); // Set the profile picture URL
         return user;
+    }
+
+    public Wishlist convertToEntity(WishlistDto wishlistDto){
+        Wishlist wishlist = new Wishlist();
+        wishlist.setId(wishlistDto.getId());
+        return wishlist;
+    }
+
+    public WishlistDto convertToDto(Wishlist wishlist) {
+        WishlistDto wishlistDto = new WishlistDto();
+        wishlistDto.setId(wishlist.getId());
+        wishlistDto.setUserId((long) wishlist.getUser().getId());
+        wishlistDto.setProductId(wishlist.getProduct().getId());
+        return wishlistDto;
     }
 }
 

@@ -63,6 +63,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers(publicUrl)
                         .permitAll()
+                        .requestMatchers("/wishlist/add/**").authenticated()
                         .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated());
 

@@ -1,5 +1,6 @@
 package com.example.thymeleaf_demo.dto;
 
+import com.example.thymeleaf_demo.domain.Wishlist;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,13 +11,16 @@ import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @ToString
 public class UserDto  {
 
-    private int id;
+    private Long id;
     private String username;
     private String email;
     private String description;
@@ -24,6 +28,13 @@ public class UserDto  {
     private MultipartFile profilePicture; // for uploading image file
     private String profilePictureUrl; // for displaying image
     private Boolean isEnabled;
+
+    private List<WishlistDto> wishlists = new ArrayList<WishlistDto>();
+
+    public UserDto(Long id, String username) {
+        this.id = id;
+        this.username = username;
+    }
 
     public UserDto() {
     }

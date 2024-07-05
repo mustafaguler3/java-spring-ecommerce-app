@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,18 +47,20 @@ public class ProductsController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final DTOConverter dtoConverter;
+    private final WishlistService wishlistService;
 
     @Autowired
     public ProductsController(ProductService productService, CategoryService categoryService,
                               FileStorageService fileStorageService,
                               ReviewService reviewService, UserService userService,
-                              DTOConverter dtoConverter) {
+                              DTOConverter dtoConverter, WishlistService wishlistService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.fileStorageService = fileStorageService;
         this.reviewService = reviewService;
         this.userService = userService;
         this.dtoConverter = dtoConverter;
+        this.wishlistService = wishlistService;
     }
 
     @GetMapping("/products/{productId}")
@@ -215,6 +218,7 @@ public class ProductsController {
 
         return "product-edit";
     }
+
 
 }
 

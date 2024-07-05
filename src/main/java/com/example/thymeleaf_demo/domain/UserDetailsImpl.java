@@ -26,6 +26,14 @@ public class UserDetailsImpl implements UserDetails {
                 .collect(toList());
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();

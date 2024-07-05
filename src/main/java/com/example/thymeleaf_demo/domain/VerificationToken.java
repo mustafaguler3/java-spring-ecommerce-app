@@ -3,11 +3,16 @@ package com.example.thymeleaf_demo.domain;
 import com.example.thymeleaf_demo.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Calendar;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 public class VerificationToken {
 
