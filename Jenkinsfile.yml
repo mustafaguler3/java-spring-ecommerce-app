@@ -4,7 +4,7 @@
     stages {
     stage('Checkout') {
     steps {
-    git 'https://github.com/your-repo/your-project.git'
+    git 'https://github.com/mustafaguler3/spring-user-management-app.git'
     }
     }
     
@@ -22,7 +22,7 @@
     
     stage('Deploy') {
     steps {
-    sh 'java -jar target/your-application.jar'
+    sh 'java -jar target/application.jar'
     }
     }
     }
