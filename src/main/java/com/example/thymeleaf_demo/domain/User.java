@@ -38,6 +38,9 @@ public class User{
     private String description;
     private String profilePicture;
 
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Cart cart;
+
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER,orphanRemoval = true)
     private Set<Wishlist> wishlists = new HashSet<>();
 

@@ -7,7 +7,18 @@
     <title>Title</title>
 
     <link rel="stylesheet" th:href="@{/css/home.css}">
-
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
+    <style>
+        .cart-icon {
+       position: relative;
+       display: inline-block;
+     }
+     .cart-icon .badge {
+       position: absolute;
+       top: -10px;
+       right: -10px;
+     }
+    </style>
 
 </head>
 <body th:fragment="header (currentUser)">
@@ -42,6 +53,15 @@
                         </li>
 
                     </ul>
+
+                    <div class="cart-icon">
+                        <a th:href="@{/shopping-cart}">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge badge-primary">0</span>
+                        </a>
+
+                    </div>
+
                     <div class="dropdown" sec:authorize="isAuthenticated()">
                         <a
                                 data-mdb-dropdown-init

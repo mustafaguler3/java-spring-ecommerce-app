@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: mshop
+    ports:
+      - "3307:3306"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mshop
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
