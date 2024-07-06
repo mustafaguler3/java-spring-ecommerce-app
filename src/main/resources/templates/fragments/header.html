@@ -9,21 +9,17 @@
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <style>
-        .cart-icon {
-       position: relative;
-       display: inline-block;
-     }
-     .cart-icon .badge {
-       position: absolute;
-       top: -10px;
-       right: -10px;
-     }
+        .badge {
+    position: absolute;
+    top: 29px;
+    left: 917px;
+}
     </style>
 
 </head>
 <body th:fragment="header (currentUser)">
 
-    <div>
+
         <nav class="navbar navbar-expand-sm bg-light" >
             <div class="container-fluid">
                 <a class="navbar-brand">
@@ -55,12 +51,12 @@
                     </ul>
 
                     <div class="cart-icon">
-                        <a th:href="@{/shopping-cart}">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="badge badge-primary">0</span>
+                        <a class="nav-link" th:href="@{/cart}">
+                            <i class="fas fa-shopping-cart fa-lg"></i>
+                            <span class="badge badge-pill badge-primary" th:text="${cartItemCount}"></span>
                         </a>
-
                     </div>
+
 
                     <div class="dropdown" sec:authorize="isAuthenticated()">
                         <a
@@ -101,7 +97,7 @@
                 </div>
             </div>
         </nav>
-    </div>
+
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

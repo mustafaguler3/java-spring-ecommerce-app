@@ -19,11 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,16 +38,18 @@ public class HomeController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final CartService cartService;
 
     @Autowired
     public HomeController(ProductService productService, WishlistService wishlistService,
                           ReviewService reviewService,
-                          UserService userService, CategoryService categoryService) {
+                          UserService userService, CategoryService categoryService, CartService cartService) {
         this.productService = productService;
         this.wishlistService = wishlistService;
         this.reviewService = reviewService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.cartService = cartService;
     }
 
 
@@ -92,6 +92,8 @@ public class HomeController {
 
         return "home";
     }
+
+
 }
 
 

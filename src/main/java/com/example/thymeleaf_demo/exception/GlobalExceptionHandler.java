@@ -1,6 +1,7 @@
 package com.example.thymeleaf_demo.exception;
 
 import com.example.thymeleaf_demo.dto.UserDto;
+import com.example.thymeleaf_demo.service.CartService;
 import com.example.thymeleaf_demo.service.UserService;
 import groovy.util.logging.Log4j2;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +37,24 @@ public class GlobalExceptionHandler {
 
 
     private final UserService userService;
+    private final CartService cartService;
 
     @Autowired
-    public GlobalExceptionHandler(UserService userService) {
+    public GlobalExceptionHandler(UserService userService, CartService cartService) {
         this.userService = userService;
+        this.cartService = cartService;
+    }
+
+    @ModelAttribute
+    public void cartCount(Principal principal, Model model){
+        if (principal!=null){
+            String username = principal.getName();
+            UserDto userDto = userService.findByUsername(username);
+
+            int cartItemCount = cartService.getCartItemCountByUserId(userDto.getId());
+
+            model.addAttribute("cartItemCount",cartItemCount);
+        }
     }
 
     @ModelAttribute

@@ -6,10 +6,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
 
 
     <title>Product Listing</title>
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -100,6 +101,10 @@
 </head>
 <body layout:fragment="mainContent">
 
+<div th:if="${message}">
+    <h5 th:text="${message}"></h5>
+</div>
+
 <div class="container mt-5">
     <div class="row">
         <div class="col-lg-3">
@@ -136,18 +141,23 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text="${product.name}"></h5>
                             <p class="card-text" th:text="${product.description}"></p>
-                            <p class="card-text" style="font-weight: 700; line-height: 20px;" th:text="${product.price}"></p>
+                            <p class="card-text" style="font-weight: 700; line-height: 20px;"
+                               th:text="${product.price}"></p>
 
                             <div class="d-flex mt-3">
                                 <div class="stars-outer">
-                                    <div class="stars-inner" th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                                    <div class="stars-inner"
+                                         th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
                                 </div>
                                 <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}"></span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <a class="btn btn-xs btn-primary" href="#">
-                                    <span class="fas fa-cart-plus mr-2"></span> Add to cart
-                                </a>
+                                <form
+                                      th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                                    <button  class="btn btn-xs btn-primary" id="addToCartBtn" th:onclick="|addToCart(${product.id})|">
+                                        <span class="fas fa-cart-plus mr-2"></span> Add to cart
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -214,10 +224,56 @@
             }
         });
     });
+
+
+   function addToCart(productId) {
+        fetch(`/cart/add/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+        }).then(response => response.text())
+          .then(message => {
+              if (message.includes("Ürün sepete eklendi")) {
+                  showToast("Ürün sepete eklendi", 'success');
+              } else {
+                  showToast("Ürün sepete eklenemedi", 'error');
+              }
+          })
+          .catch(error => {
+              showToast("Bir hata oluştu", 'error');
+          });
+    }
+
+    function showToast(message, type) {
+        Toastify({
+            text: message,
+            className: type === 'success' ? 'success' : 'error',
+            style: {
+                background: type === 'success' ? "linear-gradient(to right, #00b09b, #96c93d)" : "linear-gradient(to right, #ff416c, #ff4b2b)"
+            }
+        }).showToast();
+    }
+
 </script>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var message = /*[[${message}]]*/ '';
+    if (message) {
+        Toastify({
+            text: message,
+            className: 'info',
+            style: {
+                background: 'linear-gradient(to right, #00b09b, #96c93d)'
+            }
+        }).showToast();
+    }
+    /*]]>*/
+</script>
 
-
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>

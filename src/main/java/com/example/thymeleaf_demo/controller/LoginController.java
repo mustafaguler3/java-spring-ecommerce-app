@@ -1,13 +1,19 @@
 package com.example.thymeleaf_demo.controller;
 
+import com.example.thymeleaf_demo.domain.Cart;
 import com.example.thymeleaf_demo.domain.User;
+import com.example.thymeleaf_demo.dto.CartDto;
 import com.example.thymeleaf_demo.dto.LoginDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.repository.UserRepository;
+import com.example.thymeleaf_demo.service.CartService;
 import com.example.thymeleaf_demo.service.UserService;
+import com.example.thymeleaf_demo.util.DTOConverter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,21 +24,22 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final CartService cartService;
+    private final DTOConverter dtoConverter;
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, UserService userService) {
+    public LoginController(AuthenticationManager authenticationManager, UserService userService, CartService cartService, DTOConverter dtoConverter) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        this.cartService = cartService;
+        this.dtoConverter = dtoConverter;
     }
 
     @GetMapping("/login")
@@ -51,7 +58,8 @@ public class LoginController {
     @PostMapping("/login")
     public String login(@ModelAttribute("loginDto") @Valid UserDto userDto,
                         BindingResult bindingResult,
-                        Model model) {
+                        Model model,
+                        HttpSession session) {
         UserDto user = userService.findByEmail(userDto.getEmail());
 
         if (user == null) {
@@ -63,7 +71,8 @@ public class LoginController {
             model.addAttribute("errorMsg", "Please verify your email address before logging in.");
             return "login";
         }
-
+        Cart cart = cartService.findOrCreateCartForUser(dtoConverter.convertToEntity(userDto));
+        session.setAttribute("cart",cart);
         return "redirect:/home";
     }
 

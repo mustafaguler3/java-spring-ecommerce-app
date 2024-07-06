@@ -1,18 +1,12 @@
 package com.example.thymeleaf_demo.service.Impl;
 
-import com.example.thymeleaf_demo.domain.PasswordResetToken;
-import com.example.thymeleaf_demo.domain.Role;
-import com.example.thymeleaf_demo.domain.User;
-import com.example.thymeleaf_demo.domain.VerificationToken;
+import com.example.thymeleaf_demo.domain.*;
 import com.example.thymeleaf_demo.dto.PasswordResetTokenDto;
 import com.example.thymeleaf_demo.dto.RegisterDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.FileStorageException;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
-import com.example.thymeleaf_demo.repository.PasswordResetTokenRepository;
-import com.example.thymeleaf_demo.repository.RoleRepository;
-import com.example.thymeleaf_demo.repository.UserRepository;
-import com.example.thymeleaf_demo.repository.VerificationTokenRepository;
+import com.example.thymeleaf_demo.repository.*;
 import com.example.thymeleaf_demo.service.EmailService;
 import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.UserService;
@@ -55,6 +49,9 @@ public class UserServiceImpl implements UserService {
     private PasswordResetTokenRepository passwordResetTokenRepository;
     @Autowired
     private DTOConverter dtoConverter;
+
+    @Autowired
+    private CartRepository cartRepository;
 
 
     @Override
@@ -107,6 +104,11 @@ public class UserServiceImpl implements UserService {
         verificationToken.setUser(user1);
         verificationToken.setExpiryDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)); // 24 saat geçerlilik
         verificationTokenRepository.save(verificationToken);
+
+        Cart cart = new Cart();
+        cart.setUser(user1);
+        cartRepository.save(cart);
+
 
         emailService.sendVerificationEmail(user1, token);
 
