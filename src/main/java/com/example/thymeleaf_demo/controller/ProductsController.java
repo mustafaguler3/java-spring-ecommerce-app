@@ -70,11 +70,9 @@ public class ProductsController {
         ProductDto productDto = productService.getProduct(Long.valueOf(productId));
         //Map<Integer,Long> ratingCount = reviewService.getRatingCountsByProduct(productDto);
         List<ReviewDto> reviews = reviewService.getReviewsByProduct(productDto);
+        double averageRating = reviewService.getAverageRating(productDto.getId());
+        productDto.setAverageRating(averageRating);
 
-        if (productDto == null){
-            model.addAttribute("error", "Product not found");
-            return "product-detail";
-        }
         // Calculate the percentages for each rating
         int[] ratingCounts = new int[5];
         for (ReviewDto review : reviews) {
@@ -88,6 +86,7 @@ public class ProductsController {
                 ratingPercentages[i] = (double) ratingCounts[i] / reviews.size() * 100;
             }
         }
+
         model.addAttribute("ratingPercentages", ratingPercentages);
         model.addAttribute("ratingCounts", ratingCounts);
         model.addAttribute("totalReviews", reviews.size());

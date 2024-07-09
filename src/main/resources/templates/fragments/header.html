@@ -8,13 +8,7 @@
 
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
-    <style>
-        .badge {
-    position: absolute;
-    top: 29px;
-    left: 917px;
-}
-    </style>
+
 
 </head>
 <body th:fragment="header (currentUser)">
@@ -89,7 +83,8 @@
                     </div>
 
 
-                    <form th:action="@{/users}" th:classappend="${#authorization.expression('isAuthenticated()') ? 'd-flex justify-content-center' : 'd-flex ms-auto'}" method="get">
+                    <form th:action="@{/users}"
+                          th:classappend="${#authorization.expression('isAuthenticated()') ? 'd-flex justify-content-center' : 'd-flex'}" method="get">
                         <input th:value="${keyword}"
                                name="keyword" class="form-control me-sm-2" type="search" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>

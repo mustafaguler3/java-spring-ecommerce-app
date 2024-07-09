@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -123,6 +125,13 @@ public class ProductServiceImpl implements ProductService {
 
 
     }
+
+    /*@Override
+    public List<String> getProductsByBrand() {
+        List<String> products = productRepository.getProductsByBrand();
+
+        return products;
+    }*/
 
     private ProductDto convertToDto(Product product) {
         ProductDto productDto = new ProductDto();

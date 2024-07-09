@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .product-page {
+            display: flex;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        .product-image img {
+                width: 400px;
+    height: 490px;
+            border-radius: 10px;
+        }
+        .product-details {
+            margin-left: 20px;
+            flex: 1;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: grey;
+        }
+        .discount-badge {
+            background-color: orange;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-selector button {
+            background-color: #ff7f00;
+            border: none;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        .reviews {
+            margin-top: 30px;
+        }
+        .review-item {
+            margin-bottom: 20px;
+        }
+        .rating {
+            display: flex;
+            align-items: center;
+        }
+        .rating i {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body layout:fragment="mainContent">
+<div class="container">
+    <div class="row product-page">
+        <div class="col-md-6 product-image">
+            <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}" alt="Product Image">
+        </div>
+        <div class="col-md-6 product-details">
+            <p class="text-uppercase text-muted" th:text="${product.brand}"></p>
+            <h1 th:text="${product.name}"></h1>
+            <div class="reviews" th:each="review : ${reviews}">
+
+
+                <div class="rating">
+                    <i class="fa fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
+                    <i class="fa fa-star" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i>
+                    <div class="stars-inner"
+                         th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'">
+                        <span class="px-1" th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}"></span>
+                        <a th:text="${totalReviews + ' reviews'}"></a>
+                    </div>
+
+                </div>
+            </div>
+            <p class="mt-3" th:text="${product.description}"></p>
+            <div class="price">
+                $125.00 <span class="discount-badge">50%</span>
+                <p class="old-price" th:text="${product.price}"></p>
+            </div>
+            <div class="quantity-selector">
+                <button class="btn">-</button>
+                <input type="text" class="form-control text-center" value="1" style="width: 50px;">
+                <button class="btn">+</button>
+            </div>
+            <button class="btn btn-warning btn-block mt-3">Add to cart</button>
+        </div>
+    </div>
+
+
+    <div class="reviews mt-5">
+        <h2>Reviews</h2>
+        <div class="review-item" th:each="review : ${reviews}">
+            <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}"
+                 alt="User Image" class="rounded-circle mr-3" style="width: 60px; height: 60px;">
+            <div class="d-flex justify-content-between">
+                <div class="rating">
+                    <i class="fa fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
+                    <i class="fa fa-star" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i>
+                    <span class="ml-2" th:text="${review.username + ' - ' + review.publishedDate}">Helen M. - Yesterday</span>
+                </div>
+            </div>
+            <p th:text="${review.comment}">Excellent running shoes. It turns very sharply on the foot.</p>
+            <div>
+                <button class="btn btn-link p-0">Reply</button>
+                <span class="ml-3">42 <i class="fa fa-thumbs-up"></i> 0 <i class="fa fa-thumbs-down"></i></span>
+            </div>
+        </div>
+        <div class="review-item">
+            <div class="d-flex justify-content-between">
+                <div class="rating">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <span class="ml-2">Ann D. - 2 days ago</span>
+                </div>
+            </div>
+            <p>Very comfortable and stylish. Perfect for daily wear.</p>
+            <div>
+                <button class="btn btn-link p-0">Reply</button>
+                <span class="ml-3">35 <i class="fa fa-thumbs-up"></i> 1 <i class="fa fa-thumbs-down"></i></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>
+

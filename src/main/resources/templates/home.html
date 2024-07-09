@@ -9,95 +9,23 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
 
 
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+
+
     <title>Product Listing</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        .card-img-top {
-            max-height: 150px;
-            object-fit: contain;
+        .brand-list {
+            display: flex;
+            flex-direction: column;
         }
-        .sidebar {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-right: 1px solid #dee2e6;
-        }
-        .sidebar h5 {
-            margin-bottom: 20px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar ul li {
+        .brand-list .brand-item {
             margin-bottom: 10px;
-        }
-
-        .stars-outer {
-            display: inline-block;
-            position: relative;
-            font-family: FontAwesome;
-        }
-        .stars-inner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            color: #f8ce0b;
-        }
-        .stars-outer::before {
-            content: "\f005 \f005 \f005 \f005 \f005";
-            color: #ccc;
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-        }
-        .stars-inner::before {
-            content: "\f005 \f005 \f005 \f005 \f005";
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-        }
-
-
-
-        .product {
-    border: 1px solid #ccc;
-    padding: 16px;
-    margin: 16px;
-    width: 300px;
-    text-align: center;
-    position: relative;
-}
-
-.product-name {
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.position-absolute {
-    position: absolute;
-}
-
-
-        .wishlist-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .wishlist-button .fa-heart {
-            font-size: 24px;
-            color: gray;
-        }
-
-        .wishlist-button .fa-heart.red {
-            color: red;
         }
 
 
     </style>
+
 </head>
 <body layout:fragment="mainContent">
 
@@ -105,86 +33,167 @@
     <h5 th:text="${message}"></h5>
 </div>
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="sidebar">
-                <h5>Category</h5>
-                <ul th:each="category: ${categories}">
-                    <li><a href="#" th:text="${category.name}">Tüm kategoriler</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-9">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4" th:each="product : ${products}">
-                    <div class="card">
-                        <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
-                             class="card-img-top" alt="Laptop Image">
 
-                        <div class="badge badge-sm badge-danger
-                    position-absolute text-white" th:text="${product.name}" style="top:0.5rem; left:0.5rem">
-                        </div>
-
-                        <div class="wishlist position-absolute" style="top:0.5rem; right:0.5rem">
-                            <!--<button class="wishlist-button" th:attr="data-product-id=${product.id}">
-                                <i class="fa fa-heart heart" th:classappend="${product.inWishlist} ? 'red' : ''"></i>
-                            </button> -->
-                            <a class="wishlist-button" th:attr="data-product-id=${product.id}"
-                               th:classappend="${product.inWishlist} ? ' active' : ''">
-                                <i class="fa fa-heart" th:classappend="${product.inWishlist} ? 'red' : ''"></i>
-                            </a>
-                        </div>
+    <div class="container my-3">
+        <div class="row g-3 g-lg-4">
+            <div class="col-lg-3 my-2">
+                <div class="sidebar my-2">
 
 
+                    <div class="card my-4">
+                        <article class="card-group-item">
+                            <header class="card-header">
+                                <h6 class="title">Category</h6>
+                            </header>
+                            <div class="filter-content">
+                                <div class="list-group list-group-flush" th:each="category:${categories}">
+                                    <a href="#" class="list-group-item" th:text="${category.name}">
+                                        <span class="float-right badge badge-light round"
+                                              th:each="entry : ${categoryProductCount.entrySet()}">
+                                        <p th:text="${entry.value}"></p>
+                                        </span>
+                                    </a>
 
-                        <div class="card-body">
-                            <h5 class="card-title" th:text="${product.name}"></h5>
-                            <p class="card-text" th:text="${product.description}"></p>
-                            <p class="card-text" style="font-weight: 700; line-height: 20px;"
-                               th:text="${product.price}"></p>
 
-                            <div class="d-flex mt-3">
-                                <div class="stars-outer">
-                                    <div class="stars-inner"
-                                         th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
-                                </div>
-                                <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}"></span>
+                                </div>  <!-- list-group .// -->
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <form
-                                      th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
-                                    <button  class="btn btn-xs btn-primary" id="addToCartBtn" th:onclick="|addToCart(${product.id})|">
-                                        <span class="fas fa-cart-plus mr-2"></span> Add to cart
-                                    </button>
-                                </form>
+                        </article> <!-- card-group-item.// -->
+
+
+                    </div> <!-- card.// -->
+
+                    <div class="card my-2">
+                        <article class="card-group-item">
+                            <header class="card-header">
+                                <h6 class="title">Range input </h6>
+                            </header>
+                            <div class="filter-content">
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Min</label>
+                                            <input type="number" class="form-control" id="inputEmail4" placeholder="$0">
+                                        </div>
+                                        <div class="form-group col-md-6 text-right">
+                                            <label>Max</label>
+                                            <input type="number" class="form-control" placeholder="$1,0000">
+                                        </div>
+                                    </div>
+                                </div> <!-- card-body.// -->
+                            </div>
+                        </article> <!-- card-group-item.// -->
+                    </div>
+
+                    <div class="card my-2">
+                        <article class="card-group-item">
+                            <header class="card-header">
+                                <h6 class="title">Brand</h6>
+                            </header>
+                            <div class="filter-content">
+                                <div class="card-body" >
+
+                                    <div class="brand-list">
+                                        <div th:each="brand : ${brandCountMap.entrySet()}" class="brand-item">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" th:id="'Check' + ${brand}">
+                                                <label class="custom-control-label"
+                                                       th:for="'Check' + ${brand}" th:text="${brand.key}"></label>
+                                                <span class="float-right badge badge-light round"
+                                                          th:text="${brand.value}"></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div> <!-- card-body.// -->
+                            </div>
+                        </article> <!-- card-group-item.// -->
+                    </div>
+
+                </div>
+            </div>
+            <!-- Product Box -->
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-6 col-lg-4 my-2" th:each="product: ${products}">
+                            <div class="product-card-10">
+                                <div class="product-card-image">
+                                    <div class="badge-ribbon"><span class="badge badge-sm">Sale</span></div>
+                                    <div class="product-media">
+                                        <a th:href="@{/products/{productId}(productId=${product.id})}">
+                                        <img class="img-fluid"
+                                             style="width:380px; height:380px"
+                                             th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
+                                             title="" alt="">
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="product-card-info">
+
+                                    <h6 class="product-title"><a href="#" th:text="${product.name}">Full Rim Aviator Eyeglasses</a></h6>
+                                    <div class="product-price"><span class="text-primary" th:text="${product.price}">$28.<small>50</small></span> <del class="fs-sm text-muted">$38.<small>50</small></del></div>
+                                    <div class="d-flex mt-3 justify-content-center">
+                                        <div class="stars-outer">
+                                            <div class="stars-inner"
+                                                 th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                                        </div>
+
+                                        <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}"></span>
+                                    </div>
+                                    <div class="product-action">
+
+                                        <a class="wishlist-button btn action-btn" th:attr="data-product-id=${product.id}"
+                                           th:classappend="${product.inWishlist} ? 'active' : ''">
+                                            <i class="fa fa-heart" th:classappend="${product.inWishlist} ? 'text-danger' : ''"></i>
+                                        </a>
+
+                                        <a href="#" class="btn action-btn">
+                                            <i class="fa fa-repeat">
+
+                                            </i>
+                                        </a>
+                                        <a
+                                           th:href="@{/products/{productId}(productId=${product.id})}" class="btn action-btn">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+
+                                        <form
+                                                class="btn action-btn" th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                                            <button class="btn action-btn" id="addToCartBtn" th:onclick="|addToCart(${product.id})|">
+                                                <i class="fa fa-shopping-cart">
+
+                                                </i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+        </div>
 
-            </div>
+
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" th:if="${currentPage > 0}">
+                        <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages - 1)}">
+                        <a class="page-link" th:href="@{/home(page=${i})}"
+                           th:text="${i + 1}"
+                           th:classappend="${i == currentPage} ? 'active' : ''"></a>
+                    </li>
+                    <li class="page-item" th:if="${currentPage < totalPages - 1}">
+                        <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 
-    <div class="d-flex justify-content-center">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item" th:if="${currentPage > 0}">
-                    <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
-                </li>
-                <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages - 1)}">
-                    <a class="page-link" th:href="@{/home(page=${i})}"
-                       th:text="${i + 1}"
-                       th:classappend="${i == currentPage} ? 'active' : ''"></a>
-                </li>
-                <li class="page-item" th:if="${currentPage < totalPages - 1}">
-                    <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</div>
+
+
 
 
 <script>
@@ -273,8 +282,10 @@
     /*]]>*/
 </script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 </body>
 </html>

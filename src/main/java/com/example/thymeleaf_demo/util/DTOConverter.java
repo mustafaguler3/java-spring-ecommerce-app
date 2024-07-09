@@ -1,13 +1,7 @@
 package com.example.thymeleaf_demo.util;
 
-import com.example.thymeleaf_demo.domain.Product;
-import com.example.thymeleaf_demo.domain.Review;
-import com.example.thymeleaf_demo.domain.User;
-import com.example.thymeleaf_demo.domain.Wishlist;
-import com.example.thymeleaf_demo.dto.ProductDto;
-import com.example.thymeleaf_demo.dto.ReviewDto;
-import com.example.thymeleaf_demo.dto.UserDto;
-import com.example.thymeleaf_demo.dto.WishlistDto;
+import com.example.thymeleaf_demo.domain.*;
+import com.example.thymeleaf_demo.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -27,6 +21,49 @@ public class DTOConverter {
     @Autowired
     public DTOConverter(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public Category convertToCategory(CategoryDto categoryDto){
+        Category category = new Category();
+        category.setId(categoryDto.getId());
+        category.setName(categoryDto.getName());
+
+        Set<Product> products =
+                categoryDto.getProductDtos().stream()
+               .map(p -> {
+                    Product product = new Product();
+                    product.setId(p.getId());
+                    product.setName(p.getName());
+                    product.setPrice(p.getPrice());
+                    product.setDescription(p.getDescription());
+                    product.setBrand(p.getBrand());
+                    product.setStock(p.getStock());
+                    product.setCategory(category);
+                    return product;
+
+               })
+               .collect(Collectors.toSet());
+
+        category.setProducts(products);
+
+        return category;
+    }
+
+    public CategoryDto convertToCategoryDto(Category category){
+
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(category.getId());
+        categoryDto.setName(category.getName());
+
+        Set<ProductDto> productDtos = category.getProducts().stream()
+                .map(product -> convertToProductDTO(product))
+                .collect(Collectors.toSet());
+
+        categoryDto.setProductDtos(productDtos);
+
+
+
+        return categoryDto;
     }
 
     public Product convertToProduct(ProductDto productDto) {

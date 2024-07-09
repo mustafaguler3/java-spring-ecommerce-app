@@ -16,6 +16,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     Product findProductById(@Param("x") Long id);
 
     Page<Product> findAll(Pageable pageable);
+
+    /*@Query(value = "SELECT distinct count(*) ,p.brand FROM new.product p\n" +
+            "group by p.brand",nativeQuery = true)
+    List<String> getProductsByBrand(); */
 }
 
 

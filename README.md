@@ -1,3 +1,10 @@
+
+![img_16.png](img_16.png)
+
+![img_17.png](img_17.png)
+
+![img_18.png](img_18.png)
+
 ![img.png](img.png)
 
 ![img_3.png](img_3.png)

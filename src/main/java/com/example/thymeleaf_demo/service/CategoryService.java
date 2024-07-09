@@ -1,10 +1,12 @@
 package com.example.thymeleaf_demo.service;
 
 import com.example.thymeleaf_demo.domain.Category;
-import com.example.thymeleaf_demo.dto.CategoryDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CategoryService {
-    List<CategoryDto> getCategories();
+    List<Category> getCategories();
+    Map<String, Long> getCategoryProductCounts();
+    List<Category> getCategoriesWithProduct();
 }

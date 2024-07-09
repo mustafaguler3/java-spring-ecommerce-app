@@ -8,11 +8,6 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        <style>
-        body {
-            background-color: #000;
-            color: #fff;
-        }
         .rating-bar {
             height: 10px;
             background-color: #555;
@@ -74,48 +69,126 @@
             font-family: 'Font Awesome 5 Free';
             font-weight: 900;
         }
+
+        .product-page {
+            display: flex;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        .product-image img {
+                width: 400px;
+    height: 490px;
+            border-radius: 10px;
+        }
+        .product-details {
+            margin-left: 20px;
+            flex: 1;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: grey;
+        }
+        .discount-badge {
+            background-color: orange;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-selector button {
+            background-color: #ff7f00;
+            border: none;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        .reviews {
+            margin-top: 30px;
+        }
+        .review-item {
+            margin-bottom: 20px;
+        }
+        .rating {
+            display: flex;
+            align-items: center;
+        }
+        .rating i {
+            color: #ffc107;
+        }
+
+button.btn.btn-outline-warning.btn-block.mt-3:hover {
+    background: mediumpurple;
+    color: white;
+}
+
+        button.btn.btn-outline-warning.btn-block.mt-3 {
+    background: white;
+    color: mediumpurple;
+    border: solid;
+}
+
+        .quantity-selector button {
+    background-color: mediumpurple;
+    border: none;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+        .quantity-selector button:hover {
+    background: white;
+    color: mediumpurple;
+}
     </style>
 </head>
 <body layout:fragment="mainContent">
 
 <!-- Product section-->
-<section class="py-5">
-    <div class="container px-4 px-lg-5 my-5" th:if="${product != null}">
+<section class="container py-5">
+    <div class="row product-page">
+        <div class="col-md-6 product-image">
+            <img th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}" alt="Product Image">
+        </div>
+        <div class="col-md-6 product-details">
+            <p class="text-uppercase text-muted" th:text="${product.brand}"></p>
+            <h1 th:text="${product.name}"></h1>
+            <div class="reviews">
+                <div class="rating">
+                    <!--<i class="fa fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i> -->
+                    <!--<i class="fa fa-star" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i> -->
+                    <div class="d-flex justify-content-center">
+                        <div class="stars-outer">
+                            <div class="stars-inner"
+                                 th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                        </div>
 
-        <div class="row gx-4 gx-lg-5 align-items-center">
-            <div class="col-md-6">
-                <img class="card-img-top mb-5 mb-md-0"
-                                       th:src="@{/uploads/products/{fileName}(fileName=${product.imageUrlShow})}"
-                     width="100%" height="100%" alt="..." />
-            </div>
-            <div class="col-md-6">
-                <div class="small badge badge-sm badge-danger" th:text="${product.brand}"></div>
-                <h1 class="display-5 fw-bolder" th:text="${product.name}"></h1>
-                <small class="badge badge-sm badge-dark p-0" th:text="${product.category.name}"></small>
-
-                <div class="d-flex mt-3">
-                    <div class="stars-outer">
-                        <div class="stars-inner"
-                             th:style="'width:' + (${product.averageRating} / 5.0 * 100) + '%'"></div>
+                        <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}"></span>
                     </div>
-                    <span th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.7</span>
-                </div>
 
-
-                <div class="fs-5 mb-5">
-                    <span th:text="${product.price}">$45.00</span>
-                    <!-- <span class="text-decoration-line-through">$40.00</span> -->
-                </div>
-                <p class="lead" th:text="${product.description}"></p>
-                <div class="d-flex">
-                    <input class="form-control text-center me-3" id="inputQuantity"
-                           type="number" value="1" style="max-width: 3rem" />
-                    <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                        <i class="bi-cart-fill me-1"></i>
-                        Add to cart
-                    </button>
                 </div>
             </div>
+            <p class="mt-3" th:text="${product.description}"></p>
+            <div class="price">
+                <!-- $125.00 <span class="discount-badge">50%</span> -->
+                <!--<p class="old-price" th:text="${product.price}"></p>-->
+                <p th:text="${product.price}"></p>
+            </div>
+            <div class="quantity-selector">
+                <button class="btn">-</button>
+                <input type="text" class="form-control" value="1" style="width: 90px; text-align:center;">
+                <button class="btn">+</button>
+            </div>
+            <button
+                    class="btn btn-outline-warning btn-block mt-3"
+                    th:href="@{/cart/add/{id}(id=${product.id})}">Add to cart</button>
         </div>
     </div>
 
@@ -123,7 +196,6 @@
 
     <div th:if="${message}"><h1 th:text="${message}"></h1></div>
     <div th:if="${error}"><h1 th:text="${error}"></h1></div>
-    <br>
 
     <div>
         <div  class="container">
@@ -146,19 +218,32 @@
                         </span>
 
                             <div class="rating-bar w-75">
-                                <div class="rating-bar-filled" th:style="'width: ' + ${ratingPercentages[rating-1]} + '%'"></div>
+                                <div class="rating-bar-filled"
+                                     th:style="'width: ' + ${ratingPercentages[rating-1]} + '%'"></div>
                             </div>
                                 <span class="ml-2" th:text="${#numbers.formatDecimal(ratingPercentages[rating-1], 0, 0)} + '%'"></span>
                         </div>
                     </div>
                     <div class="mb-4">
                         <h4>Share your thoughts</h4>
-                        <form class="form-horizontal"
+                        <form class="form-horizontal card"
                               th:action="@{/products/review}" method="post">
 
                             <input type="hidden"  name="id" th:value="${productId}">
                             <input type="hidden" name="currentUser" th:value="${currentUser}">
 
+                            <!-- Rating -->
+                            <div class="form-group p-3">
+                                <label for="rating">Your rating</label>
+                                <div id="rating-stars" class="rating-stars">
+                                    <i class="fa fa-star star" data-value="1"></i>
+                                    <i class="fa fa-star star" data-value="2"></i>
+                                    <i class="fa fa-star star" data-value="3"></i>
+                                    <i class="fa fa-star star" data-value="4"></i>
+                                    <i class="fa fa-star star" data-value="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="rating" min="1" max="5" required>
+                            </div>
                             <!-- Message body -->
                                 <div class="form-group">
                                     <label class="col-md-3 control-label" for="message">Your message</label>
@@ -167,18 +252,7 @@
                                                   name="comment" placeholder="Please enter your feedback here..." rows="5"></textarea>
                                     </div>
                                 </div>
-                                <!-- Rating -->
-                                <div class="form-group">
-                                    <label for="rating">Your rating</label>
-                                    <div id="rating-stars" class="rating-stars">
-                                        <i class="fa fa-star star" data-value="1"></i>
-                                        <i class="fa fa-star star" data-value="2"></i>
-                                        <i class="fa fa-star star" data-value="3"></i>
-                                        <i class="fa fa-star star" data-value="4"></i>
-                                        <i class="fa fa-star star" data-value="5"></i>
-                                    </div>
-                                    <input type="hidden" name="rating" id="rating" min="1" max="5" required>
-                                </div>
+
                                     <!-- Form actions -->
                                     <div class="form-group">
                                         <div class="col-md-12 text-center">
@@ -195,10 +269,9 @@
                             <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}" alt="User Image" class="rounded-circle mr-3" style="width: 60px; height: 60px;">
 
                             <div>
-                                <h5 th:text="${review.username}"></h5>
+                                <h5 th:text="${review.username + ' - ' + review.publishedDate}"></h5>
                                 <p class="text-warning">
                                     <span th:each="i : ${#numbers.sequence(1, review.rating)}">&#9733;</span>
-                                    <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}">&#9734;</span>
                                 </p>
                                 <p th:text="${review.comment}"></p>
                             </div>

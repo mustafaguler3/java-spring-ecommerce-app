@@ -1,16 +1,11 @@
 package com.example.thymeleaf_demo.controller;
 
-import com.example.thymeleaf_demo.domain.Product;
-import com.example.thymeleaf_demo.domain.Review;
-import com.example.thymeleaf_demo.domain.UserDetailsImpl;
-import com.example.thymeleaf_demo.domain.Wishlist;
-import com.example.thymeleaf_demo.dto.ProductDto;
-import com.example.thymeleaf_demo.dto.ReviewDto;
-import com.example.thymeleaf_demo.dto.UserDto;
-import com.example.thymeleaf_demo.dto.WishlistDto;
+import com.example.thymeleaf_demo.domain.*;
+import com.example.thymeleaf_demo.dto.*;
 import com.example.thymeleaf_demo.service.*;
 import com.example.thymeleaf_demo.service.Impl.ReviewServiceImpl;
 import com.example.thymeleaf_demo.util.DTOConverter;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +47,53 @@ public class HomeController {
         this.cartService = cartService;
     }
 
+    @GetMapping("/b/{productId}")
+    public String b(@PathVariable Long productId,
+                    Model model,
+                    Authentication authentication){
+        ProductDto productDto = productService.getProduct(Long.valueOf(productId));
+        //Map<Integer,Long> ratingCount = reviewService.getRatingCountsByProduct(productDto);
+        List<ReviewDto> reviews = reviewService.getReviewsByProduct(productDto);
+
+        if (productDto == null){
+            model.addAttribute("error", "Product not found");
+            return "b";
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            UserDto currentUser = userService.findByUsername(authentication.getName());
+            Long userId = currentUser.getId();
+
+                double averageRating = reviewService.getAverageRating(productDto.getId());
+                productDto.setAverageRating(averageRating);
+                boolean isWishlist = wishlistService.isProductInWishlist(userId,productDto.getId());
+                productDto.setInWishlist(isWishlist);
+        } else {
+                double averageRating = reviewService.getAverageRating(productDto.getId());
+                productDto.setAverageRating(averageRating);
+                productDto.setInWishlist(false);
+        }
+        // Calculate the percentages for each rating
+        int[] ratingCounts = new int[5];
+        for (ReviewDto review : reviews) {
+            ratingCounts[review.getRating() - 1]++;
+        }
+        double[] ratingPercentages = new double[5];
+        for (int i = 0; i < ratingCounts.length; i++) {
+            if (reviews.isEmpty()){
+                ratingPercentages[i] = 0.0;
+            }else {
+                ratingPercentages[i] = (double) ratingCounts[i] / reviews.size() * 100;
+            }
+        }
+        model.addAttribute("ratingPercentages", ratingPercentages);
+        model.addAttribute("ratingCounts", ratingCounts);
+        model.addAttribute("totalReviews", reviews.size());
+        model.addAttribute("reviews",reviewService.getReviewsByProduct(productDto));
+        model.addAttribute("product", productDto);
+
+
+        return "b";
+    }
 
     @GetMapping(value = {"/","home"})
     public String home(Model model,
@@ -61,26 +103,25 @@ public class HomeController {
                        ){
 
         Page<ProductDto> products = productService.getProducts(PageRequest.of(pageNumber, pageSize));
+        Map<String,Long> categoryProductCounts = categoryService.getCategoryProductCounts();
+        // Group by brand and count the occurrences
+        Map<String, Long> brandCountMap = products.stream()
+                .collect(Collectors.groupingBy(ProductDto::getBrand, Collectors.counting()));
 
+
+        // Print the results (or add to the model in a web application)
+        brandCountMap.forEach((brand, count) -> System.out.println(brand + ": " + count));
+
+        // Add the count map to the model
+        model.addAttribute("brandCountMap", brandCountMap);
+
+        model.addAttribute("categoryProductCount", categoryProductCounts);
         model.addAttribute("categories",categoryService.getCategories());
 
-        if (authentication != null && authentication.isAuthenticated()) {
-            UserDto currentUser = userService.findByUsername(authentication.getName());
-            Long userId = currentUser.getId();
-            products.forEach(product -> {
-                double averageRating = reviewService.getAverageRating(product.getId());
-                product.setAverageRating(averageRating);
-                boolean isWishlist = wishlistService.isProductInWishlist(userId,product.getId());
-                product.setInWishlist(isWishlist);
-            });
-        } else {
-            products.forEach(product -> {
-                double averageRating = reviewService.getAverageRating(product.getId());
-                product.setAverageRating(averageRating);
-                product.setInWishlist(false);  // Kullanıcı giriş yapmamışsa wishlist kontrolü yapılmaz
-            });
-        }
-
+        products.forEach(product -> {
+            double averageRating = reviewService.getAverageRating(product.getId());
+            product.setAverageRating(averageRating);
+        });
         if (products == null || products.isEmpty()){
             model.addAttribute("error", "No products found");
             return "home";

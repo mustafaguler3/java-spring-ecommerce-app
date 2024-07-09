@@ -37,9 +37,21 @@
                 </div>
                 <div class="mb-4">
                     <h4>Share your thoughts</h4>
-                    <form class="form-horizontal" th:action="@{/products/review}" method="post">
+                    <form class="form-horizontal card" th:action="@{/products/review}" method="post">
+                        <!-- Rating -->
+                        <div class="form-group">
+                            <label for="rating">Your rating</label>
+                            <div id="rating-stars" class="rating-stars">
+                                <i class="fa fa-star star" data-value="1"></i>
+                                <i class="fa fa-star star" data-value="2"></i>
+                                <i class="fa fa-star star" data-value="3"></i>
+                                <i class="fa fa-star star" data-value="4"></i>
+                                <i class="fa fa-star star" data-value="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="rating" value="0">
+                        </div>
 
-                        <fieldset>
+                        <div>
                             <input type="hidden" name="userId" required>
                             <input type="hidden"  name="productId" required>
                             <!-- Message body -->
@@ -49,21 +61,6 @@
                                     <textarea class="form-control" id="message" name="comment" placeholder="Please enter your feedback here..." rows="5"></textarea>
                                 </div>
                             </div>
-
-                            <!-- Rating -->
-                            <div class="form-group">
-                                <label for="rating">Your rating</label>
-                                <div id="rating-stars" class="rating-stars">
-                                    <i class="fa fa-star star" data-value="1"></i>
-                                    <i class="fa fa-star star" data-value="2"></i>
-                                    <i class="fa fa-star star" data-value="3"></i>
-                                    <i class="fa fa-star star" data-value="4"></i>
-                                    <i class="fa fa-star star" data-value="5"></i>
-                                </div>
-                                <input type="hidden" name="rating" id="rating" value="0">
-                            </div>
-                            </td>
-                            <td align="center" valign="top" width="23%">
                                 <!-- Form actions -->
                                 <div class="form-group">
                                     <div class="col-md-12 text-center">
@@ -71,14 +68,15 @@
                                         <button type="reset" class="btn btn-default btn-md">Clear</button>
                                     </div>
                                 </div>
-                        </fieldset>
+                        </div>
                     </form>
                 </div>
             </div>
             <div class="col-md-6" th:if="${reviews != null}">
                 <div th:each="review : ${reviews}" class="review-container">
                     <div class="d-flex">
-                        <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}" alt="User Image" class="rounded-circle mr-3" style="width: 60px; height: 60px;">
+                        <img th:src="@{/uploads/users/{fileName}(fileName=${review.profilePicture})}"
+                             alt="User Image" class="rounded-circle mr-3" style="width: 60px; height: 60px;">
 
                         <div>
                             <h5 th:text="${review.username}"></h5>

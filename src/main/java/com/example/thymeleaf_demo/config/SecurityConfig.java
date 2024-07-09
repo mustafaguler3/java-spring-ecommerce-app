@@ -27,6 +27,7 @@ public class SecurityConfig {
     private final String[] publicUrl = {"/",
             "/register/**",
             "/register",
+            "/b/**",
             "/",
             "/products/review",
             "/home",
