@@ -5,6 +5,12 @@
 
 ![img_18.png](img_18.png)
 
+Apply Coupon Code
+
+![img_19.png](img_19.png)
+
+![img_20.png](img_20.png)
+
 ![img.png](img.png)
 
 ![img_3.png](img_3.png)
@@ -26,6 +32,7 @@ Edit Profile Page
 Average Review
 ![img_9.png](img_9.png)
 
+Old View
 Wishlist
 ![img_10.png](img_10.png)
 

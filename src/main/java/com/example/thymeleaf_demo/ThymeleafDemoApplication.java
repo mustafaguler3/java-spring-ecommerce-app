@@ -32,7 +32,7 @@ import java.util.Properties;
 @EntityScan("com.example.thymeleaf_demo.domain")
 @EnableJpaRepositories("com.example.thymeleaf_demo.repository")
 //@EnableWebSecurity(debug = true)
-public class ThymeleafDemoApplication {
+public class ThymeleafDemoApplication{
 
 	@Autowired
 	private ProductRepository productRepository;
@@ -74,7 +74,12 @@ public class ThymeleafDemoApplication {
 		List<Category> category = Arrays.asList(
 				new Category("Computer"),
 				new Category("Phone"),
-				new Category("Tablet")
+				new Category("Tablet"),
+				new Category("Monitor"),
+                new Category("Mouse"),
+                new Category("Keyboard"),
+                new Category("Headphones"),
+				new Category("Television")
 		);
 		categoryRepository.saveAll(category);
 

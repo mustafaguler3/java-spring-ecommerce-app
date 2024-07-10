@@ -38,6 +38,12 @@ public class User{
     private String description;
     private String profilePicture;
 
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Cart cart;
 

@@ -26,6 +26,9 @@ public class Product {
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<Review>();
 
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

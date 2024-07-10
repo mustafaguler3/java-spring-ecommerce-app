@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body layout:fragment="mainContent">
+
+<h1>Order Confirmation</h1>
+<div th:if="${order != null}">
+    <p>Thank you for your order!</p>
+    <p>Order ID: <span th:text="${order.id}"></span></p>
+    <p>Order Date: <span th:text="${order.orderDate}"></span></p>
+    <p>Total: <span th:text="${order.totalPrice}"></span></p>
+</div>
+<div th:if="${order == null}">
+    <p>Order not found. Please check your order details and try again.</p>
+</div>
+</body>
+</html>

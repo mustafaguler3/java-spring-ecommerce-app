@@ -99,7 +99,7 @@ public class CartServiceImpl implements CartService {
                     CartItemDto cartItemDto = new CartItemDto();
                     cartItemDto.setProductName(cartItem.getProduct().getName());
                     cartItemDto.setQuantity(cartItem.getQuantity());
-                    cartItemDto.setPrice(df.format(cartItem.getProduct().getPrice()));
+                    cartItemDto.setPrice(Double.parseDouble(df.format(cartItem.getProduct().getPrice())));
                     cartItemDto.setSubtotal(df.format(cartItem.getSubtotal()));
                     cartItemDto.setImageUrl(cartItem.getProduct().getImageUrl());
                     cartItemDto.setDescription(cartItem.getProduct().getDescription());
