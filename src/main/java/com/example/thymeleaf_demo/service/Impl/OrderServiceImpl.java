@@ -1,11 +1,7 @@
 package com.example.thymeleaf_demo.service.Impl;
 
-import com.example.thymeleaf_demo.domain.CartItem;
 import com.example.thymeleaf_demo.domain.Order;
 import com.example.thymeleaf_demo.domain.OrderItem;
-import com.example.thymeleaf_demo.domain.Payment;
-import com.example.thymeleaf_demo.dto.CartDto;
-import com.example.thymeleaf_demo.dto.CartItemDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.OrderItemRepository;
@@ -20,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {

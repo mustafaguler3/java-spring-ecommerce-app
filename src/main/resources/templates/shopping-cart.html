@@ -14,7 +14,7 @@
 
 
     <!-- Shopping Cart-->
-    <div class="table-responsive shopping-cart">
+    <div class="table-responsive shopping-basket">
         <table class="table">
             <thead>
             <tr>
@@ -28,37 +28,37 @@
             </thead>
             <tbody>
             <div th:if="${message}">
-                <h6 class="alert alert-sm alert-danger">Your cart is empty</h6>
+                <h6 class="alert alert-sm alert-danger">Your basket is empty</h6>
             </div>
-            <tr th:each="cartItem : ${cart.cartItems}">
+            <tr th:each="basketItem : ${basket.cartItems}">
 
                 <td>
                     <div class="product-item">
                         <a class="product-thumb" href="#">
-                            <img th:src="@{/uploads/products/{fileName}(fileName=${cartItem.imageUrl})}"></a>
+                            <img th:src="@{/uploads/products/{fileName}(fileName=${basketItem.imageUrl})}"></a>
                         <div class="product-info">
                             <h4 class="product-title">
                                 <a href="#"
-                                   th:text="${cartItem.productName}"></a>
-                            </h4><span th:text="${cartItem.description}"><em>Size:</em> 10.5</span><span th:text="${cartItem.brand}"><em>Brand:</em> Dark Blue</span>
+                                   th:text="${basketItem.productName}"></a>
+                            </h4><span th:text="${basketItem.description}"><em>Size:</em> 10.5</span><span th:text="${basketItem.brand}"><em>Brand:</em> Dark Blue</span>
                         </div>
                     </div>
                 </td>
                 <td class="text-center">
                     <div class="count-input">
                         <select class="form-control">
-                            <option th:text="${cartItem.quantity}">1</option>
+                            <option th:text="${basketItem.quantity}">1</option>
                         </select>
                     </div>
                 </td>
-                <td class="text-center text-lg text-medium" th:text="${cartItem.price}"></td>
-                <td class="text-center text-lg text-medium" th:text="${cartItem.subtotal}">$18.00</td>
-                <td class="text-center"><a class="remove-from-cart" href="#" data-toggle="tooltip" title="" data-original-title="Remove item"><i class="fa fa-trash"></i></a></td>
+                <td class="text-center text-lg text-medium" th:text="${basketItem.price}"></td>
+                <td class="text-center text-lg text-medium" th:text="${basketItem.subtotal}">$18.00</td>
+                <td class="text-center"><a class="remove-from-basket" href="#" data-toggle="tooltip" title="" data-original-title="Remove item"><i class="fa fa-trash"></i></a></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="shopping-cart-footer">
+    <div class="shopping-basket-footer">
         <div class="column">
             <form class="coupon-form" method="post">
                 <input class="form-control form-control-sm" type="text" placeholder="Coupon code" required="">
@@ -66,15 +66,15 @@
             </form>
         </div>
         <div class="column text-lg">Subtotal:
-            <span class="text-medium" th:text="${cart.total}">$289.68</span>
+            <span class="text-medium" th:text="${basket.total}">$289.68</span>
         </div>
     </div>
-    <div class="shopping-cart-footer">
+    <div class="shopping-basket-footer">
         <div class="column">
             <a class="btn btn-outline-secondary" th:href="@{/home}">
             <i class="icon-arrow-left"></i>&nbsp;Back to Shopping</a>
         </div>
-        <div class="column"><a class="btn btn-primary" href="#" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!">Update Cart</a>
+        <div class="column"><a class="btn btn-primary" href="#" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your basket" data-toast-message="is updated successfully!">Update Cart</a>
             <a class="btn btn-success" th:href="@{/checkout}">Checkout</a>
         </div>
     </div>

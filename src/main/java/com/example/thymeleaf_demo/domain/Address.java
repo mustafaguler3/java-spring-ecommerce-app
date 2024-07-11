@@ -12,11 +12,11 @@ public class Address {
 
     private String address;
     private String address2;
+    private String phone;
     private String city;
     private String state;
     private String zipCode;
     private String country;
-
     private String firstName;
     private String lastName;
 

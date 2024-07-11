@@ -1,8 +1,6 @@
 package com.example.thymeleaf_demo.service.Impl;
 
 import com.example.thymeleaf_demo.domain.*;
-import com.example.thymeleaf_demo.dto.PasswordResetTokenDto;
-import com.example.thymeleaf_demo.dto.RegisterDto;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.FileStorageException;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
@@ -11,19 +9,15 @@ import com.example.thymeleaf_demo.service.EmailService;
 import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.UserService;
 import com.example.thymeleaf_demo.util.DTOConverter;
-import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -105,9 +99,9 @@ public class UserServiceImpl implements UserService {
         verificationToken.setExpiryDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)); // 24 saat geçerlilik
         verificationTokenRepository.save(verificationToken);
 
-        Cart cart = new Cart();
-        cart.setUser(user1);
-        cartRepository.save(cart);
+        Basket basket = new Basket();
+        basket.setUser(user1);
+        cartRepository.save(basket);
 
 
         emailService.sendVerificationEmail(user1, token);

@@ -14,7 +14,7 @@
     <p>Thank you for your order!</p>
     <p>Order ID: <span th:text="${order.id}"></span></p>
     <p>Order Date: <span th:text="${order.orderDate}"></span></p>
-    <p>Total: <span th:text="${order.totalPrice}"></span></p>
+    <p>Total: <span th:text="${totalAmount}"></span></p>
 </div>
 <div th:if="${order == null}">
     <p>Order not found. Please check your order details and try again.</p>

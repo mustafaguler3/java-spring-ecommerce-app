@@ -29,6 +29,17 @@ public class UserDto  {
     private String profilePictureUrl; // for displaying image
     private Boolean isEnabled;
 
+    private String address;
+    private String address2;
+    private String city;
+    private String state;
+    private String zipCode;
+    private String country;
+
+    private String firstName;
+    private String lastName;
+
+
     private List<WishlistDto> wishlists = new ArrayList<WishlistDto>();
 
     public UserDto(Long id, String username) {

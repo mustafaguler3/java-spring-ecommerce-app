@@ -157,9 +157,9 @@
                                         </a>
 
                                         <form
-                                                class="btn action-btn" th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                                                class="btn action-btn" th:action="@{/basket/add/{id}(id=${product.id})}" method="post">
                                             <button class="btn action-btn" id="addToCartBtn" th:onclick="|addToCart(${product.id})|">
-                                                <i class="fa fa-shopping-cart">
+                                                <i class="fa fa-shopping-basket">
 
                                                 </i>
                                             </button>
@@ -236,7 +236,7 @@
 
 
    function addToCart(productId) {
-        fetch(`/cart/add/${productId}`, {
+        fetch(`/basket/add/${productId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

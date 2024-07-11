@@ -44,9 +44,9 @@
 
                     </ul>
 
-                    <div class="cart-icon">
-                        <a class="nav-link" th:href="@{/cart}">
-                            <i class="fas fa-shopping-cart fa-lg"></i>
+                    <div class="basket-icon">
+                        <a class="nav-link" th:href="@{/basket}">
+                            <i class="fas fa-shopping-basket fa-lg"></i>
                             <span class="badge badge-pill badge-primary" th:text="${cartItemCount}"></span>
                         </a>
                     </div>
@@ -72,6 +72,9 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" th:href="@{/profile}">My profile</a>
+                            <a class="dropdown-item" th:href="@{/order/{id}(id=${currentUser})}">
+                                Orders
+                            </a>
                             <a class="dropdown-item" th:href="@{/wishlist}">Wishlist</a>
 
                             <a class="dropdown-item"

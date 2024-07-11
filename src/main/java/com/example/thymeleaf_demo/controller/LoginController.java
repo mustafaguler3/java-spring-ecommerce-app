@@ -1,11 +1,7 @@
 package com.example.thymeleaf_demo.controller;
 
-import com.example.thymeleaf_demo.domain.Cart;
-import com.example.thymeleaf_demo.domain.User;
-import com.example.thymeleaf_demo.dto.CartDto;
-import com.example.thymeleaf_demo.dto.LoginDto;
+import com.example.thymeleaf_demo.domain.Basket;
 import com.example.thymeleaf_demo.dto.UserDto;
-import com.example.thymeleaf_demo.repository.UserRepository;
 import com.example.thymeleaf_demo.service.CartService;
 import com.example.thymeleaf_demo.service.UserService;
 import com.example.thymeleaf_demo.util.DTOConverter;
@@ -13,11 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -71,8 +64,8 @@ public class LoginController {
             model.addAttribute("errorMsg", "Please verify your email address before logging in.");
             return "login";
         }
-        Cart cart = cartService.findOrCreateCartForUser(dtoConverter.convertToEntity(userDto));
-        session.setAttribute("cart",cart);
+        Basket basket = cartService.findOrCreateCartForUser(dtoConverter.convertToEntity(userDto));
+        session.setAttribute("cart", basket);
         return "redirect:/home";
     }
 

@@ -1,23 +1,17 @@
 package com.example.thymeleaf_demo.controller;
 
-import com.example.thymeleaf_demo.domain.Cart;
-import com.example.thymeleaf_demo.domain.User;
+import com.example.thymeleaf_demo.domain.Basket;
 import com.example.thymeleaf_demo.domain.UserDetailsImpl;
-import com.example.thymeleaf_demo.dto.CartDto;
-import com.example.thymeleaf_demo.dto.UserDto;
+import com.example.thymeleaf_demo.dto.BasketDto;
 import com.example.thymeleaf_demo.service.CartService;
 import com.example.thymeleaf_demo.service.UserService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @Slf4j
 @Controller
@@ -39,21 +33,21 @@ public class ShoppingCartController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
 
-        CartDto cartDto = cartService.findByUserId(userId);
+        BasketDto basketDto = cartService.findByUserId(userId);
 
-        if (cartDto.getCartItems().isEmpty()){
+        if (basketDto.getCartItems().isEmpty()){
             model.addAttribute("message","Your cart is empty");
             return "shopping-cart";
         }
 
-        model.addAttribute("cart",cartDto);
+        model.addAttribute("cart", basketDto);
 
 
         return "shopping-cart";
     }
     @ModelAttribute("cart")
-    public Cart getCart() {
-        return new Cart(); // Varsayılan olarak boş bir sepet döndürülebilir
+    public Basket getCart() {
+        return new Basket(); // Varsayılan olarak boş bir sepet döndürülebilir
     }
 
     @PostMapping("/cart/add/{productId}")

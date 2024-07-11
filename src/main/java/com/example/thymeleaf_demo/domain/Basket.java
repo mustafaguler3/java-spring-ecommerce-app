@@ -1,7 +1,6 @@
 package com.example.thymeleaf_demo.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-public class Cart {
+public class Basket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +22,11 @@ public class Cart {
     private User user;
 
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private Set<CartItem> cartItems = new HashSet<CartItem>();
+    private Set<BasketItem> basketItems = new HashSet<BasketItem>();
 
     public BigDecimal getTotal(){
-        return cartItems.stream()
-                .map(CartItem::getSubtotal)
+        return basketItems.stream()
+                .map(BasketItem::getSubtotal)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
     }
 }

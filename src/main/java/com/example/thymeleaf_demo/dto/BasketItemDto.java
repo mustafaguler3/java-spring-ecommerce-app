@@ -4,7 +4,8 @@ import com.example.thymeleaf_demo.domain.Coupon;
 import lombok.Data;
 
 @Data
-public class CartItemDto {
+public class BasketItemDto {
+    private Long productId;
     private String imageUrl;
     private String description;
     private String brand;

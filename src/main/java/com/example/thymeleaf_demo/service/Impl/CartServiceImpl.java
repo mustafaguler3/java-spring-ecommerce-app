@@ -1,12 +1,11 @@
 package com.example.thymeleaf_demo.service.Impl;
 
-import com.example.thymeleaf_demo.domain.Cart;
-import com.example.thymeleaf_demo.domain.CartItem;
+import com.example.thymeleaf_demo.domain.Basket;
+import com.example.thymeleaf_demo.domain.BasketItem;
 import com.example.thymeleaf_demo.domain.Product;
 import com.example.thymeleaf_demo.domain.User;
-import com.example.thymeleaf_demo.dto.CartDto;
-import com.example.thymeleaf_demo.dto.CartItemDto;
-import com.example.thymeleaf_demo.dto.UserDto;
+import com.example.thymeleaf_demo.dto.BasketDto;
+import com.example.thymeleaf_demo.dto.BasketItemDto;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.CartRepository;
 import com.example.thymeleaf_demo.repository.ProductRepository;
@@ -48,14 +47,14 @@ public class CartServiceImpl implements CartService {
         // retrieve user
         User user = userRepository.findByUsername(currentUser);
 
-        Cart cart = cartRepository.findByUserId(user.getId())
+        Basket basket = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUser(user);
-                    return cartRepository.save(newCart);
+                    Basket newBasket = new Basket();
+                    newBasket.setUser(user);
+                    return cartRepository.save(newBasket);
                 });
 
-        Optional<CartItem> existingCartItems = cart.getCartItems()
+        Optional<BasketItem> existingCartItems = basket.getBasketItems()
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(product.getId()))
                 .findFirst();
@@ -63,64 +62,65 @@ public class CartServiceImpl implements CartService {
         if (existingCartItems.isPresent()){
             existingCartItems.get().setQuantity(existingCartItems.get().getQuantity() + 1);
         }else {
-            CartItem cartItem = new CartItem();
-            cartItem.setCart(cart);
-            cartItem.setProduct(product);
-            cartItem.setQuantity(1);
+            BasketItem basketItem = new BasketItem();
+            basketItem.setBasket(basket);
+            basketItem.setProduct(product);
+            basketItem.setQuantity(1);
             // add item to cart
-            cart.getCartItems().add(cartItem);
+            basket.getBasketItems().add(basketItem);
         }
 
 
-        cartRepository.save(cart);
+        cartRepository.save(basket);
     }
-    public Cart findOrCreateCartForUser(User user) {
-        Cart cart = cartRepository.findByUser(user);
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
-            cartRepository.save(cart);
+    public Basket findOrCreateCartForUser(User user) {
+        Basket basket = cartRepository.findByUser(user);
+        if (basket == null) {
+            basket = new Basket();
+            basket.setUser(user);
+            cartRepository.save(basket);
         }
-        return cart;
+        return basket;
 
     }
 
     @Override
-    public CartDto findByUserId(Long userId) {
-        Cart cart = cartRepository.findByUserId(userId)
+    public BasketDto findByUserId(Long userId) {
+        Basket basket = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        CartDto cartDto = new CartDto();
+        BasketDto basketDto = new BasketDto();
 
-        List<CartItemDto> cartItemDtos =
-                cart.getCartItems()
+        List<BasketItemDto> basketItemDtos =
+                basket.getBasketItems()
                         .stream()
-                .map(cartItem -> {
-                    CartItemDto cartItemDto = new CartItemDto();
-                    cartItemDto.setProductName(cartItem.getProduct().getName());
-                    cartItemDto.setQuantity(cartItem.getQuantity());
-                    cartItemDto.setPrice(Double.parseDouble(df.format(cartItem.getProduct().getPrice())));
-                    cartItemDto.setSubtotal(df.format(cartItem.getSubtotal()));
-                    cartItemDto.setImageUrl(cartItem.getProduct().getImageUrl());
-                    cartItemDto.setDescription(cartItem.getProduct().getDescription());
-                    cartItemDto.setBrand(cartItem.getProduct().getBrand());
-                    return cartItemDto;
+                .map(basketItem -> {
+                    BasketItemDto basketItemDto = new BasketItemDto();
+                    basketItemDto.setProductId(basketItem.getProduct().getId());
+                    basketItemDto.setProductName(basketItem.getProduct().getName());
+                    basketItemDto.setQuantity(basketItem.getQuantity());
+                    basketItemDto.setPrice(Double.parseDouble(df.format(basketItem.getProduct().getPrice())));
+                    basketItemDto.setSubtotal(df.format(basketItem.getSubtotal()));
+                    basketItemDto.setImageUrl(basketItem.getProduct().getImageUrl());
+                    basketItemDto.setDescription(basketItem.getProduct().getDescription());
+                    basketItemDto.setBrand(basketItem.getProduct().getBrand());
+                    return basketItemDto;
                 }).collect(Collectors.toList());
 
-        cartDto.setCartItems(cartItemDtos);
-        cartDto.setTotal(df.format(cart.getTotal()));
+        basketDto.setCartItems(basketItemDtos);
+        basketDto.setTotal(df.format(basket.getTotal()));
 
-        return cartDto;
+        return basketDto;
     }
 
     @Override
     public int getCartItemCountByUserId(Long userId) {
-        Cart cart = cartRepository.findByUserId(userId)
+        Basket basket = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        return cart.getCartItems()
+        return basket.getBasketItems()
                 .stream()
-                .mapToInt(CartItem::getQuantity)
+                .mapToInt(BasketItem::getQuantity)
                 .sum();
     }
 }

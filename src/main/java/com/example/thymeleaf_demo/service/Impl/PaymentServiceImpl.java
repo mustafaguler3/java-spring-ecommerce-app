@@ -20,16 +20,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment processPayment(Payment payment) {
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentStatus("Success");
-
-        paymentRepository.save(payment);
-
-        Order order = payment.getOrder();
-        order.setStatus("Paid");
-        orderRepository.save(order);
-
-        return payment;
+        return paymentRepository.save(payment);
     }
 }
 

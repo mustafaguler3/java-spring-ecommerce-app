@@ -178,6 +178,51 @@ public class DTOConverter {
         wishlistDto.setProductId(wishlist.getProduct().getId());
         return wishlistDto;
     }
+
+    public static OrderItemDto toDto(OrderItem orderItem) {
+        if (orderItem == null) {
+            return null;
+        }
+
+        OrderItemDto dto = new OrderItemDto();
+        dto.setId(orderItem.getId());
+        dto.setOrderId(orderItem.getOrder() != null ? orderItem.getOrder().getId() : null);
+        dto.setProductId(orderItem.getProduct() != null ? orderItem.getProduct().getId() : null);
+        dto.setProductName(orderItem.getProduct() != null ? orderItem.getProduct().getName() : null);
+        dto.setPrice(orderItem.getPrice());
+        dto.setQuantity(orderItem.getQuantity());
+
+        return dto;
+    }
+
+    public static OrderItem toEntity(OrderItemDto dto, Order order, Product product) {
+        if (dto == null) {
+            return null;
+        }
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(dto.getId());
+        orderItem.setOrder(order);
+        orderItem.setProduct(product);
+        orderItem.setPrice(dto.getPrice());
+        orderItem.setQuantity(dto.getQuantity());
+
+        return orderItem;
+    }
+
+    public List<OrderItemDto> toDtoList(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(DTOConverter::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public static List<OrderItem> toEntityList(List<OrderItemDto> dtos, Order order, List<Product> products) {
+        return dtos.stream()
+                .map(dto -> toEntity(dto, order, products.stream().filter(p -> p.getId().equals(dto.getProductId())).findFirst().orElse(null)))
+                .collect(Collectors.toList());
+    }
+
+
 }
 
 

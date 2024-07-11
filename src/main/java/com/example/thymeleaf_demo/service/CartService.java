@@ -1,14 +1,13 @@
 package com.example.thymeleaf_demo.service;
 
-import com.example.thymeleaf_demo.domain.Cart;
+import com.example.thymeleaf_demo.domain.Basket;
 import com.example.thymeleaf_demo.domain.User;
-import com.example.thymeleaf_demo.dto.CartDto;
-import com.example.thymeleaf_demo.dto.UserDto;
+import com.example.thymeleaf_demo.dto.BasketDto;
 
 public interface CartService {
     void addProductToCart(Long productId);
-    CartDto findByUserId(Long userId);
+    BasketDto findByUserId(Long userId);
     int getCartItemCountByUserId(Long userId);
-    Cart findOrCreateCartForUser(User user);
+    Basket findOrCreateCartForUser(User user);
 
 }

@@ -2,7 +2,6 @@ package com.example.thymeleaf_demo.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private Set<CartItem> cartItems = new HashSet<CartItem>();
+    private Set<BasketItem> basketItems = new HashSet<BasketItem>();
 
     @Transient
     private boolean inWishlist;
