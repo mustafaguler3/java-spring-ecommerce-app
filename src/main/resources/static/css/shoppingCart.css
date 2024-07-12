@@ -1,31 +1,5 @@
 
 
-select.form-control:not([size]):not([multiple]) {
-    height: 44px;
-}
-select.form-control {
-    padding-right: 38px;
-    background-position: center right 17px;
-    background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNv…9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
-    background-repeat: no-repeat;
-    background-size: 9px 9px;
-}
-.form-control:not(textarea) {
-    height: 44px;
-}
-.form-control {
-    padding: 0 18px 3px;
-    border: 1px solid #dbe2e8;
-    border-radius: 22px;
-    background-color: #fff;
-    color: #606975;
-    font-family: "Maven Pro",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-
 .shopping-basket,
 .wishlist-table,
 .order-table {
@@ -228,4 +202,9 @@ select.form-control {
 
 .form-control-sm:not(textarea) {
     height: 36px;
+}
+.basket-icon>a>.badge {
+    position: absolute;
+    top: 47px;
+    left: 861px;
 }

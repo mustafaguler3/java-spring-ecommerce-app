@@ -71,8 +71,11 @@
 
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
-                    <strong class="text-decoration-line-through" th:text="${totalAmount}"></strong>
-                    <strong class="text-success" th:text="${lastDiscountAmount}"></strong>
+                    <strong class="text-decoration-line-through"
+                            th:if="${coupon != null}"
+                            th:text="${totalAmount}"></strong>
+                    <strong class="text-success"
+                            th:text="${coupon != null ?  lastDiscountAmount : totalAmount}"></strong>
                 </li>
             </ul>
 
@@ -109,7 +112,7 @@
                 <div class="mb-3">
                     <label for="phone">Phone</label>
                     <input type="tel" th:field="*{phone}" class="form-control"
-                           id="phone" placeholder="()" required>
+                           id="phone" placeholder="(___)_______" required>
                     <div class="invalid-feedback">
                         Please enter your phone.
                     </div>
@@ -117,7 +120,8 @@
 
                 <div class="mb-3">
                     <label for="address">Address</label>
-                    <input type="text" th:field="*{address}" class="form-control" id="address" placeholder="1234 Main St" required>
+                    <input type="text" th:field="*{address}" class="form-control"
+                           id="address" placeholder="Your address" required>
                     <div class="invalid-feedback">
                         Please enter your shipping address.
                     </div>
@@ -132,7 +136,7 @@
                     <div class="col-md-5 mb-3">
                         <label for="country">Country</label>
                         <select class="custom-select d-block w-100"
-                                th:field="*{country}" id="country">
+                                th:value="${country}" id="country">
                             <option th:value="${country}">Turkey</option>
                         </select>
                         <div class="invalid-feedback">
