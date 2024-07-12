@@ -8,9 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
 
-
     <link rel="stylesheet" th:href="@{/css/home.css}" />
-
 
     <title>Product Listing</title>
 
@@ -32,9 +30,7 @@
 <div th:if="${message}">
     <h5 th:text="${message}"></h5>
 </div>
-
-
-    <div class="container my-3">
+<div class="container my-3">
         <div class="row g-3 g-lg-4">
             <div class="col-lg-3 my-2">
                 <div class="sidebar my-2">
@@ -147,9 +143,7 @@
                                         </a>
 
                                         <a href="#" class="btn action-btn">
-                                            <i class="fa fa-repeat">
-
-                                            </i>
+                                            <i class="fa fa-repeat"></i>
                                         </a>
                                         <a
                                            th:href="@{/products/{productId}(productId=${product.id})}" class="btn action-btn">
@@ -158,7 +152,7 @@
 
                                         <form
                                                 class="btn action-btn" th:action="@{/basket/add/{id}(id=${product.id})}" method="post">
-                                            <button class="btn action-btn" id="addToCartBtn" th:onclick="|addToCart(${product.id})|">
+                                            <button class="btn action-btn" id="addToBasketBtn" th:onclick="|addToBasket(${product.id})|">
                                                 <i class="fa fa-shopping-basket">
 
                                                 </i>
@@ -191,11 +185,6 @@
             </nav>
         </div>
     </div>
-
-
-
-
-
 <script>
     $(document).ready(function() {
         $('.wishlist-button').click(function(event) {
@@ -235,13 +224,14 @@
     });
 
 
-   function addToCart(productId) {
+  function addToBasket(productId) {
         fetch(`/basket/add/${productId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
             }
+
         }).then(response => response.text())
           .then(message => {
               if (message.includes("Ürün sepete eklendi")) {
@@ -255,37 +245,18 @@
           });
     }
 
-    function showToast(message, type) {
-        Toastify({
-            text: message,
-            className: type === 'success' ? 'success' : 'error',
-            style: {
-                background: type === 'success' ? "linear-gradient(to right, #00b09b, #96c93d)" : "linear-gradient(to right, #ff416c, #ff4b2b)"
-            }
-        }).showToast();
+ /*function addToBasket(item)
+    {
+        let basket = JSON.parse(localStorage.getItem('basket')) || [];
+        basket.push(item)
+        localStorage.setItem('basket', JSON.stringify(basket));
     }
 
+    function clearBasket()
+    {
+     localStorage.removeItem('basket');
+    } */
 </script>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    var message = /*[[${message}]]*/ '';
-    if (message) {
-        Toastify({
-            text: message,
-            className: 'info',
-            style: {
-                background: 'linear-gradient(to right, #00b09b, #96c93d)'
-            }
-        }).showToast();
-    }
-    /*]]>*/
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<!-- jQuery library -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 </body>
 </html>

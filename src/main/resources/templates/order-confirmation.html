@@ -1,23 +1,50 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="~{layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Received</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .order-received {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .order-received .card {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .order-received .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .order-received .card-text {
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
 <body layout:fragment="mainContent">
 
-<h1>Order Confirmation</h1>
-<div th:if="${order != null}">
-    <p>Thank you for your order!</p>
-    <p>Order ID: <span th:text="${order.id}"></span></p>
-    <p>Order Date: <span th:text="${order.orderDate}"></span></p>
-    <p>Total: <span th:text="${totalAmount}"></span></p>
+<div class="order-received">
+    <div class="card text-center">
+        <div class="card-body">
+            <h5 class="card-title">Order Received</h5>
+            <p class="card-text">Thank you for your purchase! Your order has been received successfully.</p>
+            <a href="/" class="btn btn-primary">Go to Home</a>
+        </div>
+    </div>
 </div>
-<div th:if="${order == null}">
-    <p>Order not found. Please check your order details and try again.</p>
-</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -7,6 +7,10 @@ import com.example.thymeleaf_demo.repository.CouponRepository;
 import com.example.thymeleaf_demo.repository.ProductRepository;
 import com.example.thymeleaf_demo.service.*;
 import com.example.thymeleaf_demo.util.DTOConverter;
+import com.example.thymeleaf_demo.util.LyzicoService;
+import com.iyzipay.model.CheckoutFormInitialize;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import groovy.util.logging.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +33,7 @@ public class CheckoutController {
 
     private static final Logger log = LoggerFactory.getLogger(CheckoutController.class);
     @Autowired
-    private CartService cartService;
+    private BasketService basketService;
     @Autowired
     private PaymentService paymentService;
     @Autowired
@@ -42,6 +46,8 @@ public class CheckoutController {
     private ProductRepository productRepository;
     @Autowired
     private DTOConverter dtoConverter;
+    @Autowired
+    private LyzicoService lyzicoService;
 
     @GetMapping("/checkout")
     public String showCheckoutForm(@RequestParam(value = "couponCode",required = false) String couponCode,
@@ -49,8 +55,8 @@ public class CheckoutController {
                                    Principal principal) {
         UserDto userDto = userService.findByUsername(principal.getName());
 
-        BasketDto basketDto = cartService.findByUserId(userDto.getId());
-        List<BasketItemDto> cartItems = basketDto.getCartItems();
+        BasketDto basketDto = basketService.findByUserId(userDto.getId());
+        List<BasketItemDto> cartItems = basketDto.getBasketItems();
         model.addAttribute("couponCode", couponCode);
         //coupon code -> mshop2024
 
@@ -79,8 +85,8 @@ public class CheckoutController {
         log.info("Discount {}",discountedAmount);
 
         model.addAttribute("coupon",appliedCoupon);
-        model.addAttribute("cartSize", basketDto.getCartItems().size());
-        model.addAttribute("cart", basketDto.getCartItems());
+        model.addAttribute("cartSize", basketDto.getBasketItems().size());
+        model.addAttribute("basket", basketDto.getBasketItems());
         model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("lastDiscountAmount", discountedAmount);
         model.addAttribute("discountAmount", totalAmount - discountedAmount); // 700-600 -> 100! discount
@@ -94,14 +100,14 @@ public class CheckoutController {
 
     @PostMapping("/checkout")
     public String processCheckout(
-                                    @ModelAttribute("address") Address billingAddress,
+            @ModelAttribute("address") Address billingAddress,
                                   @ModelAttribute("payment") Payment paymentInfo,
                                   @RequestParam(value = "couponCode",required = false) String couponCode,
                                   Model model,
                                   Principal principal) {
         UserDto userDto = userService.findByUsername(principal.getName());
-        BasketDto basketDto = cartService.findByUserId(userDto.getId());
-        List<BasketItemDto> cartItems = basketDto.getCartItems();
+        BasketDto basketDto = basketService.findByUserId(userDto.getId());
+        List<BasketItemDto> cartItems = basketDto.getBasketItems();
         Coupon appliedCoupon = null;
 
         if (couponCode != null) {
@@ -120,75 +126,27 @@ public class CheckoutController {
                         .stream()
                         .mapToDouble(item -> item.getDiscountAmount(finalAppliedCoupon))
                         .sum();
+        long amount = (long) (appliedCoupon != null ? discountedAmount : totalAmount);
 
+        CheckoutFormInitialize checkoutFormInitialize =
+                lyzicoService.createPayment(amount, String.valueOf(userDto.getId()));
 
+        model.addAttribute("checkoutFormContent",
+                checkoutFormInitialize);
+        model.addAttribute("totalAmount", totalAmount);
 
-        // Process billing and payment information
+        basketService.deleteBasketByBasketId(basketDto.getId());
 
-
-        userDto.setAddress(billingAddress.getAddress());
-        userDto.setAddress2(billingAddress.getAddress2());
-        userDto.setCity(billingAddress.getCity());
-        userDto.setState(billingAddress.getState());
-        userDto.setZipCode(billingAddress.getZipCode());
-
-        Payment payment = new Payment();
-        payment.setPaymentStatus("Success");
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setCardCVV(paymentInfo.getCardCVV());
-        payment.setCardNumber(paymentInfo.getCardNumber());
-        payment.setAmount(appliedCoupon != null ? discountedAmount : totalAmount);
-
-        payment.setNameOnCard(paymentInfo.getNameOnCard());
-        payment.setCardExpiryDate(paymentInfo.getCardExpiryDate());
-        payment.setCurrency("$");
-        payment.setPaymentMethod(paymentInfo.getPaymentMethod());
-
-
-
-        Order order = new Order();
-
-        paymentService.processPayment(payment);
-
-        order.setOrderDate(LocalDateTime.now());
-        order.setUser(dtoConverter.convertToEntity(userDto));
-        order.setPayment(payment);
-        order.setStatus("Success");
-
-        // Convert CartItems to OrderItems
-        List<OrderItem> orderItems = cartItems.stream().map(cartItem -> {
-            OrderItem orderItem = new OrderItem();
-            Product product = productRepository.findProductById(cartItem.getProductId());
-            orderItem.setProduct(product);
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getPrice());
-            orderItem.setOrder(order);
-            return orderItem;
-        }).collect(Collectors.toList());
-        order.setOrderItems(orderItems);
-        orderService.saveOrder(order);
-        payment.setOrder(order);
-
-
-        model.addAttribute("paymentMethod", payment.getPaymentMethod().name());
-        model.addAttribute("totalAmount",order.getTotalAmount());
-        // Save to database, call payment gateway, etc.
-
-        // Redirect to order confirmation page
-        return "redirect:/order-confirmation";
+        return "redirect:"+checkoutFormInitialize.getPaymentPageUrl();
     }
 
     @GetMapping("/order-confirmation")
-    public String orderConfirmation(@RequestParam Order order,
+    public String orderConfirmation(
                                     Model model){
-        model.addAttribute("order",order);
+        // Verify the payment result using the token
         return "order-confirmation";
     }
 
-    @GetMapping("/b")
-    public String b(){
-        return "b";
-    }
 }
 
 

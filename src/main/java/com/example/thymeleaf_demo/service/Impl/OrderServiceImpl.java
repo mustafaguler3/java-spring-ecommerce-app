@@ -2,11 +2,13 @@ package com.example.thymeleaf_demo.service.Impl;
 
 import com.example.thymeleaf_demo.domain.Order;
 import com.example.thymeleaf_demo.domain.OrderItem;
+import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
 import com.example.thymeleaf_demo.repository.OrderItemRepository;
 import com.example.thymeleaf_demo.repository.OrderRepository;
-import com.example.thymeleaf_demo.service.CartService;
+import com.example.thymeleaf_demo.repository.UserRepository;
+import com.example.thymeleaf_demo.service.BasketService;
 import com.example.thymeleaf_demo.service.OrderService;
 import com.example.thymeleaf_demo.service.UserService;
 import com.example.thymeleaf_demo.util.DTOConverter;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -25,11 +28,13 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserService userService;
     @Autowired
-    private CartService cartService;
+    private BasketService basketService;
     @Autowired
     private DTOConverter dtoConverter;
     @Autowired
     private OrderItemRepository orderItemRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public Order findOrderById(Long orderId) {
@@ -55,4 +60,27 @@ public class OrderServiceImpl implements OrderService {
 
         return savedOrder;
     }
+
+    @Override
+    public List<Order> findOrderByUserId(Long userId) {
+        List<Order> order = orderRepository.findOrderByUserId(userId);
+
+        return order;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

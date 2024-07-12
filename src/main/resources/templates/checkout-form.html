@@ -43,7 +43,8 @@
         <div class="col-md-4 order-md-2 mb-4">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">Your basket</span>
-                <span class="badge badge-secondary badge-pill" th:text="${cartSize}"></span>
+                <span class="badge badge-secondary badge-pill"
+                      th:text="${cartSize}"></span>
             </h4>
             <ul class="list-group mb-3">
 
@@ -167,53 +168,6 @@
                 </div>
                 <hr class="mb-4">
 
-                <h4 class="mb-3">Payment</h4>
-                <div class="mb-3 payment-methods">
-                    <i class="fab fa-cc-visa"></i>
-                    <i class="fab fa-cc-mastercard"></i>
-                    <i class="fab fa-cc-amex"></i>
-                    <i class="fab fa-cc-paypal"></i>
-                </div>
-                    <div class="d-block my-3">
-                        <div class="custom-control custom-radio" th:each="method : ${paymentMethod}">
-                            <input th:id="'paymentMethod_' + ${method.name()}" th:value="${method.name()}"
-                                   th:field="*{paymentMethod}" type="radio" class="custom-control-input" required>
-                            <label th:for="'paymentMethod_' + ${method.name()}" th:text="${method.name()}"></label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="cc-name">Name on card</label>
-                            <input type="text" th:field="${payment.nameOnCard}" class="form-control" id="cc-name" placeholder="Name on card" required>
-                            <small class="text-muted">Full name as displayed on card</small>
-                            <div class="invalid-feedback">
-                                Name on card is required
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="cc-number">Credit card number</label>
-                            <input type="text" th:field="${payment.cardNumber}" class="form-control" id="cc-number" placeholder="" required>
-                            <div class="invalid-feedback">
-                                Credit card number is required
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label for="cc-expiration">Expiration</label>
-                            <input type="text" th:field="${payment.cardExpiryDate}" class="form-control" id="cc-expiration" placeholder="Expiration" required>
-                            <div class="invalid-feedback">
-                                Expiration date required
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="cc-expiration">CVV</label>
-                            <input type="text" th:field="${payment.cardCVV}" class="form-control" id="cc-cvv" placeholder="Cvv" required>
-                            <div class="invalid-feedback">
-                                Security code required
-                            </div>
-                        </div>
-                    </div>
                 <hr class="mb-4">
                 <button class="btn btn-primary btn-lg btn-block"
                         type="submit">Continue to checkout</button>

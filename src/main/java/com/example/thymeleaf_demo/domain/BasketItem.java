@@ -1,21 +1,24 @@
 package com.example.thymeleaf_demo.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Entity
 @Getter
 @Setter
-public class BasketItem {
+@Entity
+public class BasketItem implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "basket_id")
     private Basket basket;
     @ManyToOne
     @JoinColumn(name = "product_id")

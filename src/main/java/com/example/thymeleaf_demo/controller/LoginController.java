@@ -2,7 +2,7 @@ package com.example.thymeleaf_demo.controller;
 
 import com.example.thymeleaf_demo.domain.Basket;
 import com.example.thymeleaf_demo.dto.UserDto;
-import com.example.thymeleaf_demo.service.CartService;
+import com.example.thymeleaf_demo.service.BasketService;
 import com.example.thymeleaf_demo.service.UserService;
 import com.example.thymeleaf_demo.util.DTOConverter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,14 +24,14 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final CartService cartService;
+    private final BasketService basketService;
     private final DTOConverter dtoConverter;
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, UserService userService, CartService cartService, DTOConverter dtoConverter) {
+    public LoginController(AuthenticationManager authenticationManager, UserService userService, BasketService basketService, DTOConverter dtoConverter) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.cartService = cartService;
+        this.basketService = basketService;
         this.dtoConverter = dtoConverter;
     }
 
@@ -64,7 +64,7 @@ public class LoginController {
             model.addAttribute("errorMsg", "Please verify your email address before logging in.");
             return "login";
         }
-        Basket basket = cartService.findOrCreateCartForUser(dtoConverter.convertToEntity(userDto));
+        Basket basket = basketService.findOrCreateBasketForUser(dtoConverter.convertToEntity(userDto));
         session.setAttribute("cart", basket);
         return "redirect:/home";
     }

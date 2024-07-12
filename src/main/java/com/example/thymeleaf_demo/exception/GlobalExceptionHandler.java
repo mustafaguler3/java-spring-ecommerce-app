@@ -1,33 +1,25 @@
 package com.example.thymeleaf_demo.exception;
 
 import com.example.thymeleaf_demo.dto.UserDto;
-import com.example.thymeleaf_demo.service.CartService;
+import com.example.thymeleaf_demo.service.BasketService;
 import com.example.thymeleaf_demo.service.UserService;
 import groovy.util.logging.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.spel.SpelEvaluationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @Log4j2
 @ControllerAdvice
@@ -37,12 +29,12 @@ public class GlobalExceptionHandler {
 
 
     private final UserService userService;
-    private final CartService cartService;
+    private final BasketService basketService;
 
     @Autowired
-    public GlobalExceptionHandler(UserService userService, CartService cartService) {
+    public GlobalExceptionHandler(UserService userService, BasketService basketService) {
         this.userService = userService;
-        this.cartService = cartService;
+        this.basketService = basketService;
     }
 
     @ModelAttribute
@@ -51,7 +43,7 @@ public class GlobalExceptionHandler {
             String username = principal.getName();
             UserDto userDto = userService.findByUsername(username);
 
-            int cartItemCount = cartService.getCartItemCountByUserId(userDto.getId());
+            int cartItemCount = basketService.getBasketItemCountByUserId(userDto.getId());
 
             model.addAttribute("cartItemCount",cartItemCount);
         }

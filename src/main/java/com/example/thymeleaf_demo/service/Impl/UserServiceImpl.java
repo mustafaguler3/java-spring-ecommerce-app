@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     private DTOConverter dtoConverter;
 
     @Autowired
-    private CartRepository cartRepository;
+    private BasketRepository basketRepository;
 
 
     @Override
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
         Basket basket = new Basket();
         basket.setUser(user1);
-        cartRepository.save(basket);
+        basketRepository.save(basket);
 
 
         emailService.sendVerificationEmail(user1, token);

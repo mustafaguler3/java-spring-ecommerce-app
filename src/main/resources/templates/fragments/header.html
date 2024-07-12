@@ -7,14 +7,11 @@
     <title>Title</title>
 
     <link rel="stylesheet" th:href="@{/css/home.css}">
-    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
-
 
 </head>
 <body th:fragment="header (currentUser)">
 
-
-        <nav class="navbar navbar-expand-sm bg-light" >
+        <nav class="navbar navbar-expand-sm bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand">
                     <img th:src="@{/images/logo.png}" style="width:200px; height:70px" alt="">
@@ -25,7 +22,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarColor01">
-                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <ul class="navbar-nav mr-auto mt-2 text-uppercase mt-lg-0">
                         <li class="nav-item active">
                             <a class="nav-link" th:href="@{/home}">Home</a>
                         </li>
@@ -71,8 +68,8 @@
                              />
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" th:href="@{/profile}">My profile</a>
-                            <a class="dropdown-item" th:href="@{/order/{id}(id=${currentUser})}">
+                            <a class="dropdown-item" th:href="@{/profile}">Profile</a>
+                            <a class="dropdown-item" th:href="@{/orders}">
                                 Orders
                             </a>
                             <a class="dropdown-item" th:href="@{/wishlist}">Wishlist</a>
@@ -96,9 +93,7 @@
             </div>
         </nav>
 
-
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

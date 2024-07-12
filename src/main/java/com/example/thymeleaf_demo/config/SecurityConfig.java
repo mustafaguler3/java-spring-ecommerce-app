@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final String[] publicUrl = {"/",
             "/register/**",
             "/register",
-            "/b/**",
+            "/order-confirmation",
             "/",
             "/products/review",
             "/home",
@@ -57,6 +57,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        //http.requiresChannel( a-> a.anyRequest().requiresSecure());
+
         http
                 .csrf(csrf -> {
                     csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
@@ -72,6 +74,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/wishlist/add/**").authenticated()
                         .requestMatchers("/profile/**").authenticated()
+                        .requestMatchers("/checkout/**").authenticated()
                         .anyRequest().authenticated());
 
         //http.authenticationProvider(new CustomAuthenticationProvider());

@@ -8,11 +8,10 @@
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/css/shoppingCart.css}">
 </head>
+
 <body layout:fragment="mainContent">
 
 <div class="container padding-bottom-3x mb-1">
-
-
     <!-- Shopping Cart-->
     <div class="table-responsive shopping-basket">
         <table class="table">
@@ -30,7 +29,7 @@
             <div th:if="${message}">
                 <h6 class="alert alert-sm alert-danger">Your basket is empty</h6>
             </div>
-            <tr th:each="basketItem : ${basket.cartItems}">
+            <tr th:each="basketItem : ${basket}">
 
                 <td>
                     <div class="product-item">
@@ -53,7 +52,9 @@
                 </td>
                 <td class="text-center text-lg text-medium" th:text="${basketItem.price}"></td>
                 <td class="text-center text-lg text-medium" th:text="${basketItem.subtotal}">$18.00</td>
-                <td class="text-center"><a class="remove-from-basket" href="#" data-toggle="tooltip" title="" data-original-title="Remove item"><i class="fa fa-trash"></i></a></td>
+                <td class="text-center"><a class="remove-from-basket" href="#" data-toggle="tooltip"
+                                           title=""
+                                           data-original-title="Remove item"><i class="fa fa-trash"></i></a></td>
             </tr>
             </tbody>
         </table>
@@ -66,7 +67,7 @@
             </form>
         </div>
         <div class="column text-lg">Subtotal:
-            <span class="text-medium" th:text="${basket.total}">$289.68</span>
+            <span class="text-medium" th:text="${total}">$289.68</span>
         </div>
     </div>
     <div class="shopping-basket-footer">
@@ -80,6 +81,25 @@
     </div>
 </div>
 
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

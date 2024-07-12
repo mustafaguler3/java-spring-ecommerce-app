@@ -6,11 +6,12 @@ import com.example.thymeleaf_demo.domain.Product;
 import com.example.thymeleaf_demo.domain.User;
 import com.example.thymeleaf_demo.dto.BasketDto;
 import com.example.thymeleaf_demo.dto.BasketItemDto;
+import com.example.thymeleaf_demo.dto.UserDto;
 import com.example.thymeleaf_demo.exception.ResourceNotFoundException;
-import com.example.thymeleaf_demo.repository.CartRepository;
+import com.example.thymeleaf_demo.repository.BasketRepository;
 import com.example.thymeleaf_demo.repository.ProductRepository;
 import com.example.thymeleaf_demo.repository.UserRepository;
-import com.example.thymeleaf_demo.service.CartService;
+import com.example.thymeleaf_demo.service.BasketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,10 +23,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class CartServiceImpl implements CartService {
+public class BasketServiceImpl implements BasketService {
 
     @Autowired
-    private CartRepository cartRepository;
+    private BasketRepository basketRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -34,7 +35,7 @@ public class CartServiceImpl implements CartService {
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
-    public void addProductToCart(Long productId) {
+    public void addProductToBasket(Long productId) {
 
         // retrieve product
         Product product =
@@ -43,15 +44,14 @@ public class CartServiceImpl implements CartService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
-
         // retrieve user
         User user = userRepository.findByUsername(currentUser);
 
-        Basket basket = cartRepository.findByUserId(user.getId())
+        Basket basket = basketRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
                     Basket newBasket = new Basket();
                     newBasket.setUser(user);
-                    return cartRepository.save(newBasket);
+                    return basketRepository.save(newBasket);
                 });
 
         Optional<BasketItem> existingCartItems = basket.getBasketItems()
@@ -69,24 +69,36 @@ public class CartServiceImpl implements CartService {
             // add item to cart
             basket.getBasketItems().add(basketItem);
         }
-
-
-        cartRepository.save(basket);
+        basketRepository.save(basket);
     }
-    public Basket findOrCreateCartForUser(User user) {
-        Basket basket = cartRepository.findByUser(user);
+    public Basket findOrCreateBasketForUser(User user) {
+        Basket basket = basketRepository.findByUser(user);
         if (basket == null) {
             basket = new Basket();
             basket.setUser(user);
-            cartRepository.save(basket);
+            basketRepository.save(basket);
         }
         return basket;
 
     }
 
     @Override
+    public void deleteBasketByBasketId(Long basketId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUser = authentication.getName();
+
+        User user = userRepository.findByUsername(currentUser);
+
+        Basket basket = basketRepository.findByUser(user);
+        basketId = basket.getId();
+
+        basketRepository.deleteBasketByBasketId(basketId);
+
+    }
+
+    @Override
     public BasketDto findByUserId(Long userId) {
-        Basket basket = cartRepository.findByUserId(userId)
+        Basket basket = basketRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         BasketDto basketDto = new BasketDto();
@@ -107,15 +119,14 @@ public class CartServiceImpl implements CartService {
                     return basketItemDto;
                 }).collect(Collectors.toList());
 
-        basketDto.setCartItems(basketItemDtos);
+        basketDto.setBasketItems(basketItemDtos);
         basketDto.setTotal(df.format(basket.getTotal()));
 
         return basketDto;
     }
-
     @Override
-    public int getCartItemCountByUserId(Long userId) {
-        Basket basket = cartRepository.findByUserId(userId)
+    public int getBasketItemCountByUserId(Long userId) {
+        Basket basket = basketRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         return basket.getBasketItems()

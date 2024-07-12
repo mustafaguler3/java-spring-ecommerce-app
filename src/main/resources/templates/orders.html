@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}" >
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+
+    <style>
+        .order-list {
+            margin-top: 50px;
+        }
+        .order-list h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .order-details {
+            margin-top: 20px;
+        }
+        .order-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        .order-item h4 {
+            margin-bottom: 10px;
+        }
+
+        .basket-icon>a>.badge {
+   position: absolute;
+
+       top: 38px;
+    left: 944px;
+}
+    </style>
+</head>
+<body layout:fragment="mainContent">
+
+<div class="container">
+    <div class="order-list">
+        <h1>My Orders</h1>
+        <div th:if="${orders.isEmpty()}">
+            <p>You have no orders yet.</p>
+        </div>
+        <div th:each="order : ${orders}">
+            <div class="order-item">
+                <h4>Order #<span th:text="${order.id}"></span></h4>
+                <p>Date: <span th:text="${order.orderDate}"></span></p>
+                <p>Total Amount: $<span th:text="${order.totalAmount}"></span></p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse"
+                        th:attr="data-target='#orderItems' + ${order.id}">
+                    View Items
+                </button>
+                <div th:id="'orderItems' + ${order.id}" class="collapse order-details">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Image</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${orderItems}">
+                            <td>
+                                <img th:src="@{/uploads/products/{fileName}(fileName=${item.product.imageUrl})}" alt=""
+                                     class="img-thumbnail" width="100" height="100">
+                            </td>
+                            <td th:text="${item.product.name}"></td>
+                            <td th:text="${item.quantity}"></td>
+                            <td th:text="${item.product.price}"></td>
+                            <td class="badge rounded-pill bg-warning" th:text="${order.status}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+</body>
+</html>

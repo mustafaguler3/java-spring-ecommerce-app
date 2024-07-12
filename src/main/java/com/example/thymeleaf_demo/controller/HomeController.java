@@ -1,25 +1,17 @@
 package com.example.thymeleaf_demo.controller;
 
-import com.example.thymeleaf_demo.domain.*;
 import com.example.thymeleaf_demo.dto.*;
+import com.example.thymeleaf_demo.enums.PaymentMethodType;
 import com.example.thymeleaf_demo.service.*;
-import com.example.thymeleaf_demo.service.Impl.ReviewServiceImpl;
-import com.example.thymeleaf_demo.util.DTOConverter;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,18 +25,18 @@ public class HomeController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final CategoryService categoryService;
-    private final CartService cartService;
+    private final BasketService basketService;
 
     @Autowired
     public HomeController(ProductService productService, WishlistService wishlistService,
                           ReviewService reviewService,
-                          UserService userService, CategoryService categoryService, CartService cartService) {
+                          UserService userService, CategoryService categoryService, BasketService basketService) {
         this.productService = productService;
         this.wishlistService = wishlistService;
         this.reviewService = reviewService;
         this.userService = userService;
         this.categoryService = categoryService;
-        this.cartService = cartService;
+        this.basketService = basketService;
     }
 
     @GetMapping("/b/{productId}")
@@ -101,6 +93,14 @@ public class HomeController {
                        @RequestParam(name = "size",defaultValue = "6") int pageSize,
                        Authentication authentication
                        ){
+
+        PaymentMethodType[] methods = PaymentMethodType.values();
+
+        for (PaymentMethodType method : methods) {
+            log.info("Adding payment method: " + method);
+            System.out.println("Adding payment method: " + method);
+            model.addAttribute("paymentMethods", method);
+        }
 
         Page<ProductDto> products = productService.getProducts(PageRequest.of(pageNumber, pageSize));
         Map<String,Long> categoryProductCounts = categoryService.getCategoryProductCounts();

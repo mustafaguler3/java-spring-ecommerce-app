@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <title>Checkout</title>
+
+</head>
+<body layout:fragment="mainContent">
+
+
+<div th:utext="${checkoutFormContent}" id="iyzipay-checkout-form"></div> <!-- Embedding the checkout form content -->
+
+
+</body>
+</html>

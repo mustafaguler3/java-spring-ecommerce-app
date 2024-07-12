@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -221,6 +222,7 @@ public class DTOConverter {
                 .map(dto -> toEntity(dto, order, products.stream().filter(p -> p.getId().equals(dto.getProductId())).findFirst().orElse(null)))
                 .collect(Collectors.toList());
     }
+
 
 
 }

@@ -3,7 +3,7 @@ package com.example.thymeleaf_demo.controller;
 import com.example.thymeleaf_demo.domain.Basket;
 import com.example.thymeleaf_demo.domain.UserDetailsImpl;
 import com.example.thymeleaf_demo.dto.BasketDto;
-import com.example.thymeleaf_demo.service.CartService;
+import com.example.thymeleaf_demo.service.BasketService;
 import com.example.thymeleaf_demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,47 +15,48 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
-@SessionAttributes("cart")
-public class ShoppingCartController {
+public class BasketController {
 
     private final UserService userService;
-    private final CartService cartService;
+    private final BasketService basketService;
 
     @Autowired
-    public ShoppingCartController(UserService userService, CartService cartService) {
+    public BasketController(UserService userService, BasketService basketService) {
         this.userService = userService;
-        this.cartService = cartService;
+        this.basketService = basketService;
     }
 
-    @GetMapping("/cart")
+    @GetMapping("/basket")
     private String showCart(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
 
-        BasketDto basketDto = cartService.findByUserId(userId);
+        BasketDto basketDto = basketService.findByUserId(userId);
 
-        if (basketDto.getCartItems().isEmpty()){
+        if (basketDto.getBasketItems().isEmpty()){
             model.addAttribute("message","Your cart is empty");
             return "shopping-cart";
         }
 
-        model.addAttribute("cart", basketDto);
+        model.addAttribute("total", basketDto.getTotal());
+        model.addAttribute("basket", basketDto.getBasketItems());
 
 
         return "shopping-cart";
     }
+
     @ModelAttribute("cart")
     public Basket getCart() {
         return new Basket(); // Varsayılan olarak boş bir sepet döndürülebilir
     }
 
-    @PostMapping("/cart/add/{productId}")
+    @PostMapping("/basket/add/{productId}")
     public String  addToCart(
                             @PathVariable Long productId,
                             Model model){
 
-        cartService.addProductToCart(productId);
+        basketService.addProductToBasket(productId);
         model.addAttribute("message", "Ürün sepete eklendi");
 
         // Kullanıcıyı ana sayfaya yönlendir
