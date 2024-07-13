@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class Order {
     private List<OrderItem> orderItems;
     private String status;
     private LocalDateTime orderDate;
+    private LocalDate expectedArrival;
+    private String trackingNumber;
 
     @OneToOne(mappedBy = "order",cascade = CascadeType.ALL)
     private Payment payment;

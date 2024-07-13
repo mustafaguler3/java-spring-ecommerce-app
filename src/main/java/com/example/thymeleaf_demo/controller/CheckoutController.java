@@ -128,6 +128,7 @@ public class CheckoutController {
                         .sum();
         long amount = (long) (appliedCoupon != null ? discountedAmount : totalAmount);
 
+
         CheckoutFormInitialize checkoutFormInitialize =
                 lyzicoService.createPayment(amount, String.valueOf(userDto.getId()));
 

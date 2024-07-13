@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        layout:decorate="~{layout.html}">
+<head>
+    <title>Order Tracking</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tracking.css}">
+
+</head>
+<body layout:fragment="mainContent">
+
+<div class="container">
+    <article class="card">
+        <header class="card-header"> My Orders / Tracking </header>
+        <div class="card-body">
+            <h6>Order ID: <span th:text="${trackingInfo.orderId}"></span></h6>
+            <article class="card">
+                <div class="card-body row">
+                    <div class="col"> <strong class="fw-bold">Estimated Delivery time:</strong> <br>
+                        <strong th:text="${trackingInfo.expectedArrival}"></strong></div>
+                    <div class="col"> <strong class="fw-bold">Shipping BY:</strong> <br> MShop Express, | <i class="fa fa-phone"></i> +901111111 </div>
+                    <div class="col"> <strong class="fw-bold">Status:</strong> <br> <strong th:text="${trackingInfo.status}"></strong> </div>
+                    <div class="col"> <strong class="fw-bold">Tracking #:</strong> <br> <strong th:text="${trackingInfo.trackingNumber}"></strong> </div>
+                </div>
+            </article>
+            <div class="track">
+                <div th:classappend="${trackingInfo.status == 'Pending' ? 'active' : ''}" class="step"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
+                <div th:classappend="${trackingInfo.status == 'Packed' ? 'active' : ''}" class="step"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">Packed</span> </div>
+                <div th:classappend="${trackingInfo.status == 'En Route' ? 'active' : ''}" class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
+                <div th:classappend="${trackingInfo.status == 'Delivered' ? 'active' : ''}" class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Delivered</span> </div>
+            </div>
+            <hr>
+            <ul class="row">
+                <li class="col-md-4">
+                    <figure class="itemside mb-3" th:each="orderItem : ${orderItems}">
+                        <div class="aside">
+                            <img th:src="@{/uploads/products/{fileName}(fileName=${orderItem.product.imageUrl})}" class="img-sm border"></div>
+                        <figcaption class="info align-self-center">
+                            <p class="title" th:text="${orderItem.product.name}"> <br> </p> Price: <span class="text-muted" th:text="${orderItem.product.price}"> </span>
+                        </figcaption>
+                    </figure>
+                </li>
+            </ul>
+            <hr>
+            <a th:href="@{/orders}" class="btn btn-warning" data-abc="true"> <i class="fa fa-chevron-left"></i> Back to orders</a>
+        </div>
+    </article>
+</div>
+
+</body>
+</html>
+
+
+
