@@ -35,22 +35,3 @@ jobs:
           tags: |
             mustafaguler4/spring-ecommerce-app:latest
             mustafaguler4/spring-ecommerce-app:${{ github.sha }}
-
-  deploy-dev:
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    if: github.ref == 'refs/heads/develop'
-    steps:
-      - name: SSH Deploy to Dev Server
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.DEV_SERVER_HOST }}
-          username: ${{ secrets.DEV_SERVER_USER }}
-          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-          script: |
-            cd /home/${{ secrets.DEV_SERVER_USER }}/app-folder 
-            
-            docker pull mustafaguler4/spring-ecommerce-app:${{ github.sha }}
-            
-            export IMAGE_TAG=${{ github.sha }}
-            docker-compose -f docker-compose.dev.yml up -d
