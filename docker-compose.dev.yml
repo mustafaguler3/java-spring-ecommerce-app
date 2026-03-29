@@ -1,4 +1,10 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis-dev
+    ports:
+      - "6379:6379"
+    restart: always
   mysql:
     image: mysql:8
     container_name: mysql-dev

@@ -16,6 +16,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -33,7 +34,7 @@ import java.util.Properties;
 @SpringBootApplication
 @EntityScan("com.example.thymeleaf_demo.domain")
 @EnableJpaRepositories("com.example.thymeleaf_demo.repository")
-//@EnableWebSecurity(debug = true)
+@EnableCaching
 public class ThymeleafDemoApplication{
 
 	@Autowired

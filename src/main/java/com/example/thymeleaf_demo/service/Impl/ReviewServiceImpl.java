@@ -14,6 +14,8 @@ import com.example.thymeleaf_demo.util.DTOConverter;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Autowired
     private DTOConverter dtoConverter;
 
+    @Cacheable(value = "reviews", key = "#productDto.id")
     public List<ReviewDto> getReviewsByProduct(ProductDto productDto) {
         Product product = dtoConverter.convertToProduct(productDto);
 
@@ -53,6 +56,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable(value = "avgRating", key = "#productId")
     public double getAverageRating(Long productId) {
         List<Review> reviews = reviewRepository.findByProductId(productId);
 
@@ -106,6 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(review -> dtoConverter.convertToReviewDTO(review))
                 .collect(Collectors.toList());
     }
+    @CacheEvict(value = {"reviews", "avgRating"}, allEntries = true)
     public void saveReview(ReviewDto reviewDto) {
 
         Review review = new Review();

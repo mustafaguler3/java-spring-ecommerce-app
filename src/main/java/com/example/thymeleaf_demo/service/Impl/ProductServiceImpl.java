@@ -10,6 +10,8 @@ import com.example.thymeleaf_demo.service.FileStorageService;
 import com.example.thymeleaf_demo.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<ProductDto> getProducts(Pageable pageable) {
 
         Page<Product> products = productRepository.findAll(pageable);
@@ -92,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "product", key = "#id")
     public ProductDto getProduct(Long id) {
         Product product = productRepository.findProductById(id);
 
@@ -104,6 +108,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "product", "categories"}, allEntries = true)
     public void updateProduct(ProductDto productDto) {
         Product product = productRepository.findProductById(productDto.getId());
 
