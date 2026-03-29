@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
 
-/*@Service
+@Service
 public class StripeService {
 
     @Value("${stripe.secret.key}")
@@ -29,7 +29,7 @@ public class StripeService {
     }
 
 }
-*/
+
 
 
 

@@ -1,0 +1,36 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USER}
+    password: ${EMAIL_PASS}
+    from: ${EMAIL_FROM}
+    protocol: smtp
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+token:
+  secret: ${TOKEN_SECRET}
+  expiration: ${TOKEN_EXPIRATION}
+
+stripe:
+  secret:
+    key: ${STRIPE_SECRET_KEY}
+
+iyzico:
+  apiKey: ${IYZICO_API_KEY}
+  secretKey: ${IYZICO_SECRET_KEY}
+  baseUrl: ${IYZICO_BASE_URL}
+
+upload:
+  dir: ${UPLOAD_DIR}

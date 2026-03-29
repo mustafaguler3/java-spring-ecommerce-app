@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-prod
+    restart: always
+    env_file:
+      - .env.prod
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+
+  backend:
+    image: your-dockerhub-username/app:latest
+    container_name: app-prod
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.prod
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+volumes:
+  mysql_prod_data:

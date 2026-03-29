@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+token:
+  secret: ${TOKEN_SECRET}
+  expiration: ${TOKEN_EXPIRATION}
+
+stripe:
+  secret:
+    key: ${STRIPE_SECRET_KEY}
+
+iyzico:
+  apiKey: ${IYZICO_API_KEY}
+  secretKey: ${IYZICO_SECRET_KEY}
+  baseUrl: ${IYZICO_BASE_URL}
+
+upload:
+  dir: ${UPLOAD_DIR}
+
+mail:
+  username: ${EMAIL_USER}
+  password: ${EMAIL_PASS}
+  from: ${EMAIL_FROM}
