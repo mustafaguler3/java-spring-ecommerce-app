@@ -13,6 +13,8 @@ import com.example.thymeleaf_demo.service.OrderService;
 import com.example.thymeleaf_demo.service.UserService;
 import com.example.thymeleaf_demo.util.DTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,11 +39,13 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepository;
 
     @Override
+    @Cacheable(value = "userOrders", key = "#userId")
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     @Override
+    @CacheEvict(value = "userOrders", key = "#order.user.id")
     public Order saveOrder(Order order) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();

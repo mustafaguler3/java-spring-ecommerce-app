@@ -18,6 +18,8 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -43,6 +45,7 @@ public class WishlistServiceImpl implements WishlistService {
     private ProductRepository productRepository;
 
     @Override
+    @CacheEvict(value = "wishlist", key = "#userId")
     public Wishlist addProductToWishlist(Long userId,Long productId) {
         if (wishlistRepository.existsByUserIdAndProductId(userId,productId)){
             throw new RuntimeException("Product already in wishlist");
@@ -59,6 +62,7 @@ public class WishlistServiceImpl implements WishlistService {
 
         @Transactional
         @Override
+        @CacheEvict(value = "wishlist", key = "#userId")
         public void removeProductFromWishlist(Long userId,Long productId) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -74,6 +78,7 @@ public class WishlistServiceImpl implements WishlistService {
     }
 
     @Override
+    @Cacheable(value = "wishlist", key = "#userId")
     public List<WishlistDto> getWishlistForUser(Long userId) {
        return wishlistRepository.findByUserId(userId)
                .stream()

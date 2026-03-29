@@ -5,6 +5,7 @@ import com.example.thymeleaf_demo.repository.CategoryRepository;
 import com.example.thymeleaf_demo.service.CategoryService;
 import com.example.thymeleaf_demo.util.DTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,6 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(value = "categories", key = "#root.methodName")
     public List<Category> getCategories() {
         List<Category> results = categoryRepository.findAll();
         return results;
